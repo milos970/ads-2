@@ -1,6 +1,6 @@
 package com.milos970;
 
-public class AvlTree<K extends Comparable<K>,V> extends BinaryTree<K,V>
+public class AvlTree<K extends Comparable<K>,V> extends BinarySearchTree<K,V>
 {
     public void leftRotation(AvlNode<K,V> node) {
         if (!node.hasRightSon())
@@ -11,7 +11,7 @@ public class AvlTree<K extends Comparable<K>,V> extends BinaryTree<K,V>
         if (!node.hasParent())
         {
             AvlNode<K,V> rightSon = (AvlNode<K, V>) node.rightSon();
-            this.insertRoot(rightSon);
+            //
             rightSon.setParent(null);
 
             if (rightSon.hasLeftSon()) {
@@ -56,7 +56,7 @@ public class AvlTree<K extends Comparable<K>,V> extends BinaryTree<K,V>
 
         if (!node.hasParent()) {
             AvlNode<K,V> leftSon = (AvlNode<K,V>) node.leftSon();
-            this.insertRoot(leftSon);
+            //
             leftSon.setParent(null);
 
             if (leftSon.hasRightSon()) {
@@ -91,8 +91,9 @@ public class AvlTree<K extends Comparable<K>,V> extends BinaryTree<K,V>
         node.setParent(leftSon);
     }
 
-    public void insert(K key, V value) {
+    public V insert(K key, V value) {
         AvlNode<K,V> current = (AvlNode<K, V>) this.insertNode(new AvlNode<K,V>(key, value,0));
+
 
         while(current.hasParent()) {
             AvlNode<K,V> parent = (AvlNode<K, V>) current.parent();
@@ -104,12 +105,12 @@ public class AvlTree<K extends Comparable<K>,V> extends BinaryTree<K,V>
 
             if (parent.hasLeftSon()) {
                 leftSon = (AvlNode<K, V>) parent.leftSon();
-                leftSonHeight = leftSon.getBalanced();
+                leftSonHeight = leftSon.balance();
             }
 
             if (parent.hasRightSon()) {
                 rightSon = (AvlNode<K, V>) parent.rightSon();
-                rightSonHeight = rightSon.getBalanced();
+                rightSonHeight = rightSon.balance();
             }
 
             int parentHeight = Math.max(leftSonHeight, rightSonHeight) + 1;
@@ -117,18 +118,18 @@ public class AvlTree<K extends Comparable<K>,V> extends BinaryTree<K,V>
 
             if (balance < - 1) {
                 this.leftRotation(parent);
-                return;
+                return current.value;
             } else if (balance > 1) {
                 this.rightRotation(parent);
-                return;
+                return current.value;
             }
         }
-
+        return current.value;
     }
 
 
 
-    public static class AvlNode<K extends Comparable<K>,V> extends BinaryNode {
+    public static class AvlNode<K extends Comparable<K>,V> extends BstNode<K ,V> {
         private int balance;
 
         public AvlNode(K key, V value, int balance) {

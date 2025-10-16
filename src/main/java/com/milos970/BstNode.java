@@ -39,14 +39,41 @@ public class BstNode<K extends Comparable<K>,V> extends Node<K,V> {
     }
 
     public void setLeftSon(BstNode<K,V> node) {
+        if (node != null) {
+            node.setParent(this);
+        }
         this.left = node;
     }
 
     public void setRightSon(BstNode<K,V> node) {
+        if (node != null) {
+            node.setParent(this);
+        }
         this.right = node;
     }
 
+    public void removeLeftSon() {
+        if (this.left != null) {
+            this.left.setParent(null);
+        }
+        this.left = null;
+    }
 
+    public void removeRightSon() {
+        if (this.right != null) {
+            this.right.setParent(null);
+        }
+        this.right = null;
+    }
 
-
+    @Override
+    public String toString() {
+        return "BstNode{" +
+                "left=" + left +
+                ", right=" + right +
+                ", parent=" + parent +
+                ", key=" + key +
+                ", value=" + value +
+                '}';
+    }
 }
