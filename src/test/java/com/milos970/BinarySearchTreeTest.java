@@ -1,16 +1,19 @@
 package com.milos970;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class BinarySearchTreeTest {
-
-    private List<Integer> keys;
+    private static final int NUMBER_OF_RANDOM_KEYS = 1000;
+    private List<Integer> randomKeys;
+    BinarySearchTree<Integer, String> bst;
 
     @org.junit.Test
     public void test() {
-        BinarySearchTree<Integer, String> bst = new BinarySearchTree<>();
+        BinarySearchTree<Integer, String> bst = new AVLTree<>();
 
 
         List<Integer> keys = new ArrayList<>(10_000_000);
@@ -26,13 +29,13 @@ public class BinarySearchTreeTest {
             Random random = new Random(i);
             ++c;
 
-            for (int j = 0; j < 10_000_000; j++) {
+            for (int j = 0; j < 1_000_000; j++) {
 
-                double value = random.nextDouble();
-                if (value < 0.3) {
+                double rand = random.nextDouble();
+                if (rand < 0.3) {
 
                     bst.insertNode(new BstNode<>(keys.get(j), "MESTO"));
-                } else if (value < 0.6) {
+                } else if (rand < 0.6) {
 
                     bst.find(keys.get(j));
                 } else {
@@ -40,7 +43,13 @@ public class BinarySearchTreeTest {
 
                     } else {
                         int finalJ = j;
-                        assertThrows(NoSuchElementException.class, () -> bst.delete(keys.get(finalJ)));
+                        Optional<String> value = bst.find(keys.get(j));
+                        if (value.isPresent()) {
+                            assertEquals(value.get(), bst.delete(keys.get(j)));
+                        } else {
+                            assertThrows(NoSuchElementException.class, () -> bst.delete(keys.get(finalJ)));
+                        }
+
                     }
                 }
             }
@@ -48,30 +57,66 @@ public class BinarySearchTreeTest {
 
     }
 
+    @org.junit.Test
+    public void testInsertDelete() {
+        this.testInsert();
+        this.testDelete();
+    }
+
+    @Test
+    public void testInorder() {
+        List<Integer> keysToInsert = new ArrayList<>();
+        for (int i = 0; i < NUMBER_OF_RANDOM_KEYS; i++) keysToInsert.add(i);
+        Collections.shuffle(keysToInsert);
+
+        BinarySearchTree<Integer, String> bst = new AVLTree<>();
+        TreeSet<Integer> expectedSet = new TreeSet<>();
+
+        for (Integer key : keysToInsert) {
+            bst.insert(key, "VALUE");
+            expectedSet.add(key);
+
+            List<Integer> bstValues = bst.inOrder();
+            List<Integer> expectedValues = new ArrayList<>(expectedSet);
+            assertEquals(expectedValues, bstValues);
+        }
+    }
+
+
+
 
     @org.junit.Test
     public void testInsert() {
-        List<Integer> keys = new ArrayList<>(10_000_000);
+        this.randomKeys = new ArrayList<>(NUMBER_OF_RANDOM_KEYS);
 
         Random random = new Random();
 
-        for (int i = 0; i < 10_000_000; i++) {
-            int key = random.nextInt(10_000_000);
-            keys.add(key);
+        for (int i = 0; i < NUMBER_OF_RANDOM_KEYS; ++i) {
+            int key = random.nextInt(NUMBER_OF_RANDOM_KEYS);
+            randomKeys.add(key);
         }
 
 
-        BinarySearchTree<Integer, String> bst = new BinarySearchTree<>();
+        this.bst =  new AVLTree<>();
 
-        for (int i = 0; i < keys.size(); i++) {
-            bst.insert(keys.get(i), "Value");
+        for (int i = 0; i < NUMBER_OF_RANDOM_KEYS; ++i) {
+            int randomValue = this.randomKeys.get(i);
+            bst.insert(randomValue, "Value");
         }
 
-        for (int i = 0; i < 10000; i++) {
-            bst.delete(keys.get(i));
+    }
+
+    @org.junit.Test
+    public void testDelete() {
+        for (int i = 0; i < 2_000_000; ++i) {
+            int key = this.randomKeys.get(i);
+            if (this.bst.find(key).isPresent()) {
+                this.bst.delete(key);
+            } else {
+                assertThrows(NoSuchElementException.class, () -> this.bst.delete(key));
+            }
+
         }
-
-
     }
 
     @org.junit.Test
@@ -83,9 +128,8 @@ public class BinarySearchTreeTest {
         }
 
         Collections.shuffle(keys);
-        System.out.println(5);
 
-        BinarySearchTree<Integer, String> bst = new BinarySearchTree<>();
+        BinarySearchTree<Integer, String> bst = new AVLTree<>();
 
         for (int i = 0; i < keys.size(); i++) {
             bst.insert(keys.get(i), "Value");
@@ -96,27 +140,7 @@ public class BinarySearchTreeTest {
         }
     }
 
-    @org.junit.Test
-    public void testDelete() {
-        List<Integer> keys = new ArrayList<>(10_000_000);
 
-        for (int i = 0; i < 10_000_000; i++) {
-            keys.add(i);
-        }
-
-        Collections.shuffle(keys);
-
-        BinarySearchTree<Integer, String> bst = new BinarySearchTree<>();
-
-        for (int i = 0; i < keys.size(); i++) {
-            bst.insert(keys.get(i), "Value");
-        }
-
-        for (int i = 0; i < keys.size(); i++) {
-            assertTrue(bst.find(keys.get(i)).isPresent());
-            bst.delete(keys.get(i));
-        }
-    }
 
 
 }

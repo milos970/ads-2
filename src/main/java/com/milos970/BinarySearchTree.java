@@ -4,8 +4,8 @@ import java.util.*;
 
 public  class BinarySearchTree<K extends Comparable<K>,V>
 {
-    private BstNode<K,V> root;
-    private long size = 0L;
+    protected BstNode<K,V> root;
+    protected int size = 0;
 
 
     protected BstNode<K,V> insertNode(BstNode<K,V> node) {
@@ -18,7 +18,7 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
 
         BstNode<K,V> current = root;
         
-        while ( true )
+        while (true)
         {
             int result = current.key.compareTo(node.key);
 
@@ -48,7 +48,7 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
             }
         }
 
-        return current;
+        return node;
     }
 
     public V insert(K key, V value) {
@@ -86,7 +86,7 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         return nodeOpt.map(node -> node.value);
     }
 
-    private void removeLeaf(BstNode<K,V> node) {
+    protected void removeLeaf(BstNode<K,V> node) {
         if (!node.hasParent()) {
             this.root = null;
         } else if (node.parent().leftSon() == node) {
@@ -98,7 +98,7 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         node.setParent(null);
     }
 
-    private void removeOneChild(BstNode<K,V> node) {
+    protected void removeOneChild(BstNode<K,V> node) {
 
         BstNode<K,V> child = node.hasLeftSon() ? node.leftSon() : node.rightSon();
 
@@ -120,8 +120,10 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
 
     }
 
-    public void inOrder() {
+    public List<K> inOrder() {
         Deque<BstNode<K,V>> stack = new ArrayDeque<>();
+        List<K> keys = new LinkedList<>();
+
         BstNode<K,V> current  = this.root;
         while (current != null || !stack.isEmpty())
         {
@@ -131,9 +133,10 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
             }
 
             current = stack.pop();
-            System.out.println(current);
+            keys.add(current.key);
             current = current.rightSon();
         }
+        return keys;
     }
 
     public void preOrder() {
@@ -198,9 +201,29 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         return node.value;
     }
 
+    public V min() {
+        BstNode<K,V> node = this.root;
+        while (node.hasLeftSon())
+        {
+            node = node.leftSon();
+        }
+
+        return node.value;
+    }
+
+    public V max() {
+        BstNode<K,V> node = this.root;
+        while (node.hasRightSon())
+        {
+            node = node.rightSon();
+        }
+
+        return node.value;
+    }
 
 
-    public long size() {
-        return size;
+
+    public int size() {
+        return this.size;
     }
 }
