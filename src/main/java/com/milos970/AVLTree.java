@@ -4,53 +4,56 @@ import java.util.NoSuchElementException;
 
 public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K,V>
 {
-    private void leftRotation(AvlNode<K,V> node)
-    {
+    private void leftRotation(AvlNode<K,V> node) {
         AvlNode<K,V> rightSon = (AvlNode<K,V>) node.rightSon();
-        node.setRightSon(rightSon.leftSon());
-
-        if (rightSon.leftSon() != null) {
-            rightSon.leftSon().setParent(node);
+        if (rightSon == null) {
+            return;
         }
 
+        AvlNode<K,V> subTree = (AvlNode<K,V>)rightSon.leftSon();
         rightSon.setLeftSon(node);
+        node.setRightSon(subTree);
 
-        node.height = calculateHeight(node);
-        rightSon.height = calculateHeight(rightSon);
-
+        if (subTree != null) {
+            subTree.setParent(node);
+        }
         rightSon.setParent(node.parent());
         node.setParent(rightSon);
 
-        if (node == super.root) {
-            this.root = rightSon;
-            rightSon.setParent(null);
+        if (rightSon.parent() == null) {
+            super.root = rightSon;
         }
-    }
-
-    private void rightRotation(AvlNode<K,V> node) {
-        AvlNode<K,V> leftSon = (AvlNode<K,V>) node.leftSon();
-
-        node.setLeftSon(leftSon.rightSon());
-        if (leftSon.rightSon() != null) {
-            leftSon.rightSon().setParent(node);
-        }
-
-
-        leftSon.setRightSon(node);
 
 
         node.height = calculateHeight(node);
-        leftSon.height = calculateHeight(leftSon);
+        rightSon.height = calculateHeight(rightSon);
+    }
 
 
+    private void rightRotation(AvlNode<K,V> node) {
+        AvlNode<K,V> leftSon = (AvlNode<K,V>) node.leftSon();
+        if (leftSon == null) {
+            return;
+        }
+
+        AvlNode<K,V> subTree = (AvlNode<K,V>)leftSon.rightSon();
+        leftSon.setRightSon(node);
+        node.setLeftSon(subTree);
+
+        if (subTree != null) {
+            subTree.setParent(node);
+        }
         leftSon.setParent(node.parent());
         node.setParent(leftSon);
 
-        if (node == super.root) {
+        if (leftSon.parent() == null) {
             super.root = leftSon;
-            leftSon.setParent(null);
         }
+
+        node.height = calculateHeight(node);
+        leftSon.height = calculateHeight(leftSon);
     }
+
 
 
 
@@ -64,7 +67,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
             parent.height = calculateHeight(parent);
             int balance = calculateBalance(parent);
 
-            AvlNode<K, V> next = null;
+            AvlNode<K, V> next = (AvlNode<K, V>)parent.parent();
             if (balance < -1)
             {
                 if (calculateBalance((AvlNode<K, V>) parent.rightSon()) > 0)
@@ -73,20 +76,16 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
                 }
                 next = (AvlNode<K, V>) parent.parent();
                 this.leftRotation(parent);
-                break;
-
-
             }
             if (balance > 1)
             {
-
                 if (calculateBalance((AvlNode<K, V>) parent.leftSon()) < 0)
                 {
                     this.leftRotation((AvlNode<K, V>) parent.leftSon());
                 }
                 next = (AvlNode<K, V>) parent.parent();
                 this.rightRotation(parent);
-                break;
+
             }
 
             parent = next;
@@ -137,7 +136,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
 
             predecessor.height = calculateHeight(predecessor);
             balance = calculateBalance(predecessor);
-            AvlNode<K, V> next = null;
+            AvlNode<K, V> next = (AvlNode<K, V>)predecessor.parent();
             if (balance < -1)
             {
                 if (calculateBalance((AvlNode<K, V>) predecessor.rightSon()) > 0)
@@ -173,8 +172,8 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
 
 
     private static <K extends Comparable<K>,V> int calculateHeight(AvlNode<K,V> node) {
-        int leftHeight = node == null ? -1 : (node.hasLeftSon()) ? ((AvlNode<K, V>) node.leftSon()).height : -1;
-        int rightHeight = node == null ? -1 : (node.hasRightSon()) ? ((AvlNode<K, V>) node.rightSon()).height : -1;
+        int leftHeight = node == null ? 0 : (node.hasLeftSon()) ? ((AvlNode<K, V>) node.leftSon()).height : 0;
+        int rightHeight = node == null ? 0 : (node.hasRightSon()) ? ((AvlNode<K, V>) node.rightSon()).height : 0;
         return Math.max(leftHeight, rightHeight) + 1;
     }
 
@@ -183,11 +182,20 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
     }
 
 
-    private static class AvlNode<K extends Comparable<K>,V> extends BstNode<K ,V> {
-        private int height;
+    protected static class AvlNode<K extends Comparable<K>,V> extends BstNode<K ,V> {
+        protected int height;
 
         public AvlNode(K key, V value) {
             super(key, value);
+        }
+
+        @Override
+        public String toString() {
+            return "AvlNode{" +
+                    "height=" + height +
+                    ", key=" + key +
+                    ", value=" + value +
+                    '}';
         }
     }
 

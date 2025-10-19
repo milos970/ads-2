@@ -94,35 +94,32 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         } else {
             node.parent().removeRightSon();
         }
-
-        node.setParent(null);
     }
 
     protected void removeOneChild(BstNode<K,V> node) {
 
         BstNode<K,V> child = node.hasLeftSon() ? node.leftSon() : node.rightSon();
-
         if (node.hasParent()) {
             if (node.parent().leftSon() == node) {
                 node.parent().setLeftSon(child);
+                child.setParent(node.parent());
             } else {
                 node.parent().setRightSon(child);
             }
-            child.setParent(node.parent());
+
         } else {
             this.root = child;
             this.root.setParent(null);
         }
 
-        node.removeLeftSon();
-        node.removeRightSon();
-        node.setParent(null);
+
+
 
     }
 
-    public List<K> inOrder() {
+    protected List<BstNode<K,V>> inOrder() {
         Deque<BstNode<K,V>> stack = new ArrayDeque<>();
-        List<K> keys = new LinkedList<>();
+        List<BstNode<K,V>> nodes = new LinkedList<>();
 
         BstNode<K,V> current  = this.root;
         while (current != null || !stack.isEmpty())
@@ -133,10 +130,10 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
             }
 
             current = stack.pop();
-            keys.add(current.key);
+            nodes.add(current);
             current = current.rightSon();
         }
-        return keys;
+        return nodes;
     }
 
     public void preOrder() {
@@ -147,7 +144,7 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         while (!stack.isEmpty()) {
 
             current = stack.pop();
-            System.out.println(current);
+
 
             if (current.hasLeftSon()) {
                 stack.push(current.leftSon());
@@ -159,66 +156,69 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         }
     }
 
-    public void postOrder() {
-
-    }
 
 
 
 
-
-    public V delete(K key)
-    {
-        BstNode<K,V> node = this.findNode(key).orElseThrow(NoSuchElementException::new);
+    public V delete(K key) {
+        BstNode<K, V> node = this.findNode(key)
+                .orElseThrow(NoSuchElementException::new);
+        V value = node.value;
 
         if (node.hasLeftSon() && node.hasRightSon()) {
 
-            BstNode<K,V> current = node.rightSon();
-
-            while (current.hasLeftSon()) {
-                current = current.leftSon();
+            BstNode<K, V> successor = node.rightSon();
+            while (successor.hasLeftSon()) {
+                successor = successor.leftSon();
             }
 
-            node.key = current.key;
-            node.value = current.value;
+            node.key = successor.key;
+            node.value = successor.value;
 
-            if (current.hasRightSon()) {
-                this.removeOneChild(current);
+
+            if (successor.hasRightSon()) {
+                this.removeOneChild(successor);
             } else {
-                this.removeLeaf(current);
+                this.removeLeaf(successor);
             }
 
-        } else
+        } else if (node.hasLeftSon() || node.hasRightSon()) {
 
-        if (node.hasRightSon() || node.hasLeftSon() ) {
             this.removeOneChild(node);
         } else {
+
             this.removeLeaf(node);
+
         }
 
-
         this.size--;
-        return node.value;
+        return value;
     }
 
-    public V min() {
+
+    public K min() {
         BstNode<K,V> node = this.root;
         while (node.hasLeftSon())
         {
             node = node.leftSon();
         }
 
-        return node.value;
+        return node.key;
     }
 
-    public V max() {
+    public K max() {
         BstNode<K,V> node = this.root;
         while (node.hasRightSon())
         {
             node = node.rightSon();
         }
 
-        return node.value;
+        return node.key;
+    }
+
+    public void clear() {
+        this.root = null;
+        this.size = 0;
     }
 
 

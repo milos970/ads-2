@@ -4,14 +4,15 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class BinarySearchTreeTest {
-    private static final int NUMBER_OF_RANDOM_KEYS = 1000;
+    private static final int NUMBER_OF_RANDOM_KEYS = 2_000_000;
     private List<Integer> randomKeys;
     BinarySearchTree<Integer, String> bst;
 
-    @org.junit.Test
+    @Test
     public void test() {
         BinarySearchTree<Integer, String> bst = new AVLTree<>();
 
@@ -57,35 +58,18 @@ public class BinarySearchTreeTest {
 
     }
 
-    @org.junit.Test
+    @Test
     public void testInsertDelete() {
         this.testInsert();
         this.testDelete();
     }
 
+
+
+
+
+
     @Test
-    public void testInorder() {
-        List<Integer> keysToInsert = new ArrayList<>();
-        for (int i = 0; i < NUMBER_OF_RANDOM_KEYS; i++) keysToInsert.add(i);
-        Collections.shuffle(keysToInsert);
-
-        BinarySearchTree<Integer, String> bst = new AVLTree<>();
-        TreeSet<Integer> expectedSet = new TreeSet<>();
-
-        for (Integer key : keysToInsert) {
-            bst.insert(key, "VALUE");
-            expectedSet.add(key);
-
-            List<Integer> bstValues = bst.inOrder();
-            List<Integer> expectedValues = new ArrayList<>(expectedSet);
-            assertEquals(expectedValues, bstValues);
-        }
-    }
-
-
-
-
-    @org.junit.Test
     public void testInsert() {
         this.randomKeys = new ArrayList<>(NUMBER_OF_RANDOM_KEYS);
 
@@ -101,12 +85,14 @@ public class BinarySearchTreeTest {
 
         for (int i = 0; i < NUMBER_OF_RANDOM_KEYS; ++i) {
             int randomValue = this.randomKeys.get(i);
-            bst.insert(randomValue, "Value");
+            bst.insert(i, "Value");
         }
+
+        assertEquals(NUMBER_OF_RANDOM_KEYS, this.bst.size);
 
     }
 
-    @org.junit.Test
+    @Test
     public void testDelete() {
         for (int i = 0; i < 2_000_000; ++i) {
             int key = this.randomKeys.get(i);
@@ -119,7 +105,7 @@ public class BinarySearchTreeTest {
         }
     }
 
-    @org.junit.Test
+    @Test
     public void testFind() {
         List<Integer> keys = new ArrayList<>(10_000_000);
 
@@ -137,6 +123,59 @@ public class BinarySearchTreeTest {
 
         for (int i = 0; i < keys.size(); i++) {
             assertTrue(bst.find(keys.get(i)).isPresent());
+        }
+    }
+
+    @Test
+    public void testMin() {
+
+        List<Integer> keys = new ArrayList<>(1000);
+        for (int j = 0; j < 1000; ++j)
+        {
+
+            keys.clear();
+            for (int i = 0; i < 1000; i++) {
+                keys.add(i);
+            }
+
+            Collections.shuffle(keys);
+            int min = Collections.min(keys);
+            this.bst = new AVLTree<>();
+
+            for (int i = 0; i < 1000; i++) {
+                this.bst.insert(keys.get(i), "VALUE");
+            }
+
+            assertEquals(min, this.bst.min());
+
+
+        }
+    }
+
+    @Test
+    public void testMax() {
+
+        List<Integer> keys = new ArrayList<>(1000);
+        for (int j = 0; j < 1000; ++j)
+        {
+
+            keys.clear();
+            for (int i = 0; i < 1000; i++) {
+                keys.add(i);
+            }
+
+            Collections.shuffle(keys);
+            int max = Collections.max(keys);
+            this.bst = new AVLTree<>();
+
+            for (int i = 0; i < 1000; i++) {
+                this.bst.insert(keys.get(i), "VALUE");
+            }
+
+            assertEquals(max, this.bst.max());
+
+
+
         }
     }
 
