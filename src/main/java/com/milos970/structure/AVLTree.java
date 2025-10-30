@@ -1,53 +1,59 @@
-package com.milos970;
+package com.milos970.structure;
 
 import java.util.NoSuchElementException;
 
-public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K,V>
+public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
 {
-    private void leftRotation(AvlNode<K,V> node) {
-        AvlNode<K,V> rightSon = (AvlNode<K,V>) node.rightSon();
+    private void leftRotation(AvlNode<K, V> node) {
+        AvlNode<K, V> rightSon = (AvlNode<K, V>) node.rightSon();
         if (rightSon == null) {
             return;
         }
 
-        AvlNode<K,V> subTree = (AvlNode<K,V>)rightSon.leftSon();
+        AvlNode<K, V> nodeParent = (AvlNode<K, V>) node.parent();
+        AvlNode<K, V> subTree = (AvlNode<K, V>) rightSon.leftSon();
+
         rightSon.setLeftSon(node);
         node.setRightSon(subTree);
 
-        if (subTree != null) {
-            subTree.setParent(node);
-        }
-        rightSon.setParent(node.parent());
-        node.setParent(rightSon);
-
-        if (rightSon.parent() == null) {
+        if (nodeParent != null) {
+            if (nodeParent.leftSon() == node) {
+                nodeParent.setLeftSon(rightSon);
+            } else {
+                nodeParent.setRightSon(rightSon);
+            }
+        } else {
             super.root = rightSon;
+            super.root.setParent(null);
         }
-
 
         node.height = calculateHeight(node);
         rightSon.height = calculateHeight(rightSon);
     }
 
 
+
     private void rightRotation(AvlNode<K,V> node) {
-        AvlNode<K,V> leftSon = (AvlNode<K,V>) node.leftSon();
+        AvlNode<K, V> leftSon = (AvlNode<K, V>) node.leftSon();
         if (leftSon == null) {
             return;
         }
 
-        AvlNode<K,V> subTree = (AvlNode<K,V>)leftSon.rightSon();
+        AvlNode<K, V> nodeParent = (AvlNode<K, V>) node.parent();
+        AvlNode<K, V> subTree = (AvlNode<K, V>) leftSon.rightSon();
+
         leftSon.setRightSon(node);
         node.setLeftSon(subTree);
 
-        if (subTree != null) {
-            subTree.setParent(node);
-        }
-        leftSon.setParent(node.parent());
-        node.setParent(leftSon);
-
-        if (leftSon.parent() == null) {
+        if (nodeParent != null) {
+            if (nodeParent.rightSon() == node) {
+                nodeParent.setRightSon(leftSon);
+            } else {
+                nodeParent.setLeftSon(leftSon);
+            }
+        } else {
             super.root = leftSon;
+            super.root.setParent(null);
         }
 
         node.height = calculateHeight(node);
@@ -57,7 +63,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
 
 
 
-
+    @Override
     public V insert(K key, V value) {
         AvlNode<K,V> current = (AvlNode<K, V>) super.insertNode(new AvlNode<>(key, value));
         AvlNode<K,V> parent = (AvlNode<K, V>)current.parent();
@@ -74,30 +80,31 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
                 {
                     this.rightRotation((AvlNode<K, V>) parent.rightSon());
                 }
-                next = (AvlNode<K, V>) parent.parent();
+
                 this.leftRotation(parent);
+                next = (AvlNode<K, V>) parent.parent();
+
             }
-            if (balance > 1)
-            {
-                if (calculateBalance((AvlNode<K, V>) parent.leftSon()) < 0)
-                {
+            if (balance > 1) {
+                if (calculateBalance((AvlNode<K, V>) parent.leftSon()) < 0) {
                     this.leftRotation((AvlNode<K, V>) parent.leftSon());
                 }
-                next = (AvlNode<K, V>) parent.parent();
                 this.rightRotation(parent);
+                next = (AvlNode<K, V>) parent.parent();
 
             }
 
             parent = next;
         }
-
         return current.value;
     }
 
+    @Override
     public V delete(K key) {
         AvlNode<K,V> node = (AvlNode<K, V>) super.findNode(key).orElseThrow(NoSuchElementException::new);
         AvlNode<K,V> predecessor = null;
 
+        V value = node.value;
 
         if (node.hasLeftSon() && node.hasRightSon()) {
 
@@ -121,7 +128,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
         } else
 
         if (node.hasRightSon() || node.hasLeftSon() ) {
-            predecessor = (AvlNode<K, V>) node.rightSon();
+            predecessor = (AvlNode<K, V>) node.parent();
             super.removeOneChild(node);
         } else {
             predecessor = (AvlNode<K, V>) node.parent();
@@ -129,13 +136,11 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
         }
 
 
-
-        int balance = -4;
-
-        while ( (balance != 1 || balance != -1) && predecessor != null) {
+        while (predecessor != null) {
 
             predecessor.height = calculateHeight(predecessor);
-            balance = calculateBalance(predecessor);
+            int balance = calculateBalance(predecessor);
+
             AvlNode<K, V> next = (AvlNode<K, V>)predecessor.parent();
             if (balance < -1)
             {
@@ -143,47 +148,48 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
                 {
                     this.rightRotation((AvlNode<K, V>) predecessor.rightSon());
                 }
-                next = (AvlNode<K, V>) predecessor.parent();
+
                 this.leftRotation(predecessor);
-                break;
-
-
+                next = (AvlNode<K, V>) predecessor.parent();
             }
-            if (balance > 1)
-            {
-
-                if (calculateBalance((AvlNode<K, V>) predecessor.leftSon()) < 0)
-                {
+            if (balance > 1) {
+                if (calculateBalance((AvlNode<K, V>) predecessor.leftSon()) < 0) {
                     this.leftRotation((AvlNode<K, V>) predecessor.leftSon());
                 }
-                next = (AvlNode<K, V>) predecessor.parent();
                 this.rightRotation(predecessor);
-                break;
+                next = (AvlNode<K, V>) predecessor.parent();
             }
 
 
-            predecessor = (AvlNode<K, V>)predecessor.parent();
+            predecessor = next;
         }
 
         super.size--;
-        return node.value;
+        return value;
 
     }
 
 
-    private static <K extends Comparable<K>,V> int calculateHeight(AvlNode<K,V> node) {
-        int leftHeight = node == null ? 0 : (node.hasLeftSon()) ? ((AvlNode<K, V>) node.leftSon()).height : 0;
-        int rightHeight = node == null ? 0 : (node.hasRightSon()) ? ((AvlNode<K, V>) node.rightSon()).height : 0;
+    private static <K extends Comparable<K>, V> int calculateHeight(AvlNode<K, V> node) {
+        if (node == null) {
+            return -1;
+        }
+        int leftHeight = node.hasLeftSon() ? ((AvlNode<K, V>) node.leftSon()).height : -1;
+        int rightHeight = node.hasRightSon() ? ((AvlNode<K, V>) node.rightSon()).height : -1;
         return Math.max(leftHeight, rightHeight) + 1;
     }
 
-    private static <K extends Comparable<K>,V> int calculateBalance(AvlNode<K,V> node) {
-        return calculateHeight((AvlNode<K, V>)node.leftSon()) - calculateHeight((AvlNode<K, V>)node.rightSon());
+
+    private static <K extends Comparable<K>, V> int calculateBalance(AvlNode<K, V> node) {
+        int left = calculateHeight((AvlNode<K, V>) node.leftSon());
+        int right = calculateHeight((AvlNode<K, V>) node.rightSon());
+        return left - right;
     }
 
 
-    protected static class AvlNode<K extends Comparable<K>,V> extends BstNode<K ,V> {
-        protected int height;
+
+    public static class AvlNode<K extends Comparable<K>,V> extends BSTNode<K ,V> {
+        private int height;
 
         public AvlNode(K key, V value) {
             super(key, value);
@@ -196,6 +202,10 @@ public final class AVLTree<K extends Comparable<K>,V> extends BinarySearchTree<K
                     ", key=" + key +
                     ", value=" + value +
                     '}';
+        }
+
+        public int height() {
+            return this.height;
         }
     }
 

@@ -1,4 +1,4 @@
-package com.milos970;
+package com.milos970.structure;
 
 public abstract class Node<K,V>
 {

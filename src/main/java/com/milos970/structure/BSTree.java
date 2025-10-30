@@ -1,14 +1,14 @@
-package com.milos970;
+package com.milos970.structure;
 
 import java.util.*;
 
-public  class BinarySearchTree<K extends Comparable<K>,V>
+public  class BSTree<K extends Comparable<K>,V> implements Tree<K,V>
 {
-    protected BstNode<K,V> root;
-    protected int size = 0;
+    protected BSTNode<K,V> root;
+    protected int size;
 
 
-    protected BstNode<K,V> insertNode(BstNode<K,V> node) {
+    protected BSTNode<K,V> insertNode(BSTNode<K,V> node) {
 
         if (this.size == 0) {
             this.root = node;
@@ -16,7 +16,7 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
             return this.root;
         }
 
-        BstNode<K,V> current = root;
+        BSTNode<K,V> current = root;
         
         while (true)
         {
@@ -51,16 +51,17 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         return node;
     }
 
+    @Override
     public V insert(K key, V value) {
-        BstNode<K,V> current = this.insertNode(new BstNode<>(key, value));
+        BSTNode<K,V> current = this.insertNode(new BSTNode<>(key, value));
         return current.value;
     }
 
 
-    protected Optional<BstNode<K,V>> findNode(K key) {
-        BstNode<K,V> current = root;
+    protected Optional<BSTNode<K,V>> findNode(K key) {
+        BSTNode<K,V> current = root;
 
-        while(current != null) //nie stale current.key.compareToKey lebo by to porovnanie mohlo byt zlozite
+        while(current != null)
         {
             int result = current.key.compareTo(key);
 
@@ -82,11 +83,11 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
 
 
     public Optional<V> find(K key) {
-        Optional<BstNode<K,V>> nodeOpt = findNode(key);
+        Optional<BSTNode<K,V>> nodeOpt = findNode(key);
         return nodeOpt.map(node -> node.value);
     }
 
-    protected void removeLeaf(BstNode<K,V> node) {
+    protected void removeLeaf(BSTNode<K,V> node) {
         if (!node.hasParent()) {
             this.root = null;
         } else if (node.parent().leftSon() == node) {
@@ -96,9 +97,9 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         }
     }
 
-    protected void removeOneChild(BstNode<K,V> node) {
+    protected void removeOneChild(BSTNode<K,V> node) {
 
-        BstNode<K,V> child = node.hasLeftSon() ? node.leftSon() : node.rightSon();
+        BSTNode<K,V> child = node.hasLeftSon() ? node.leftSon() : node.rightSon();
         if (node.hasParent()) {
             if (node.parent().leftSon() == node) {
                 node.parent().setLeftSon(child);
@@ -117,11 +118,11 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
 
     }
 
-    protected List<BstNode<K,V>> inOrder() {
-        Deque<BstNode<K,V>> stack = new ArrayDeque<>();
-        List<BstNode<K,V>> nodes = new LinkedList<>();
+    protected List<BSTNode<K, V>> inOrder() {
+        Deque<BSTNode<K,V>> stack = new ArrayDeque<>();
+        List<BSTNode<K,V>> nodes = new LinkedList<>();
 
-        BstNode<K,V> current  = this.root;
+        BSTNode<K,V> current  = this.root;
         while (current != null || !stack.isEmpty())
         {
             while(current != null) {
@@ -136,38 +137,16 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         return nodes;
     }
 
-    public void preOrder() {
-        Deque<BstNode<K,V>> stack = new ArrayDeque<>();
-        BstNode<K,V> current  = this.root;
-        stack.push(current);
 
-        while (!stack.isEmpty()) {
-
-            current = stack.pop();
-
-
-            if (current.hasLeftSon()) {
-                stack.push(current.leftSon());
-            }
-
-            if (current.hasRightSon()) {
-                stack.push(current.rightSon());
-            }
-        }
-    }
-
-
-
-
-
+    @Override
     public V delete(K key) {
-        BstNode<K, V> node = this.findNode(key)
+        BSTNode<K, V> node = this.findNode(key)
                 .orElseThrow(NoSuchElementException::new);
         V value = node.value;
 
         if (node.hasLeftSon() && node.hasRightSon()) {
 
-            BstNode<K, V> successor = node.rightSon();
+            BSTNode<K, V> successor = node.rightSon();
             while (successor.hasLeftSon()) {
                 successor = successor.leftSon();
             }
@@ -196,8 +175,9 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
     }
 
 
+    @Override
     public K min() {
-        BstNode<K,V> node = this.root;
+        BSTNode<K,V> node = this.root;
         while (node.hasLeftSon())
         {
             node = node.leftSon();
@@ -206,8 +186,9 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         return node.key;
     }
 
+    @Override
     public K max() {
-        BstNode<K,V> node = this.root;
+        BSTNode<K,V> node = this.root;
         while (node.hasRightSon())
         {
             node = node.rightSon();
@@ -216,6 +197,8 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
         return node.key;
     }
 
+
+    @Override
     public void clear() {
         this.root = null;
         this.size = 0;
@@ -226,4 +209,95 @@ public  class BinarySearchTree<K extends Comparable<K>,V>
     public int size() {
         return this.size;
     }
+
+
+    protected List<BSTNode<K, V>> intervalSearch(K key1, K key2) {
+
+        return null;
+    }
+
+
+
+
+
+    public static class BSTNode<K extends Comparable<K>,V> extends Node<K,V> {
+
+        private BSTNode<K, V> left;
+        private BSTNode<K, V> right;
+        private BSTNode<K, V> parent;
+
+        public BSTNode(K key, V value) {
+            super(key, value);
+        }
+
+        public void setParent(BSTNode<K,V> node) {
+            this.parent = node;
+        }
+
+        public BSTNode<K,V> parent() {
+            return this.parent;
+        }
+
+        public boolean hasParent() {
+            return this.parent != null;
+        }
+
+        public boolean hasLeftSon() {
+            return this.left != null;
+        }
+
+        public boolean hasRightSon() {
+            return this.right != null;
+        }
+
+        public BSTNode<K,V> leftSon() {
+            return this.left;
+        }
+
+        public BSTNode<K,V> rightSon() {
+            return this.right;
+        }
+
+        public void setLeftSon(BSTNode<K,V> node) {
+            if (node != null) {
+                node.setParent(this);
+            }
+            this.left = node;
+        }
+
+        public void setRightSon(BSTNode<K,V> node) {
+            if (node != null) {
+                node.setParent(this);
+            }
+            this.right = node;
+        }
+
+        public void removeLeftSon() {
+            if (this.left != null) {
+                this.left.setParent(null);
+            }
+            this.left = null;
+        }
+
+        public void removeRightSon() {
+            if (this.right != null) {
+                this.right.setParent(null);
+            }
+            this.right = null;
+        }
+
+        @Override
+        public String toString() {
+            return "BstNode{" +
+                    "left=" + left +
+                    ", right=" + right +
+                    ", parent=" + parent +
+                    ", key=" + key +
+                    ", value=" + value +
+                    '}';
+        }
+    }
 }
+
+
+
