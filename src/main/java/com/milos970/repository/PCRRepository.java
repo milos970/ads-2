@@ -1,140 +1,84 @@
 package com.milos970.repository;
 
-import com.milos970.model.PCR;
+import com.milos970.model.PCRTest;
+import com.milos970.model.Patient;
 import com.milos970.structure.BSTree;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
-public class PCRRepository implements Repository<PCR>
-{
+public class PCRRepository implements Repository<PCRTest> {
+
+    private final BSTree<Integer, Region> regions;
+    private final BSTree<Integer, District> districts;
+    private final BSTree<Integer, Workplace> workplaces;
+
+    private final BSTree<LocalDateTime, PCRTest> testsByDate;
+    private final BSTree<Integer, PCRTest> testsById;
+    private final BSTree<Double, PCRTest> testsById;
 
     public PCRRepository() {
-        var regions = new BSTree<Integer, BSTree<Integer, String>>();
+        this.testsById = new BSTree<>();
+        this.regions = new BSTree<>();
+        this.districts = new BSTree<>();
+        this.workplaces = new BSTree<>();
+        this.testsByDate = new BSTree<>();
 
-        regions.insert(101, new BSTree<>()); // Bratislavský kraj
-        regions.insert(201, new BSTree<>()); // Trnavský kraj
-        regions.insert(301, new BSTree<>()); // Trenčiansky kraj
-        regions.insert(401, new BSTree<>()); // Nitriansky kraj
-        regions.insert(501, new BSTree<>()); // Žilinský kraj
-        regions.insert(601, new BSTree<>()); // Banskobystrický kraj
-        regions.insert(701, new BSTree<>()); // Prešovský kraj
-        regions.insert(801, new BSTree<>()); // Košický kraj
+        initRegionsAndDistricts();
+    }
 
-// Bratislavský kraj (101)
-        var baRegion = new BSTree<Integer, String>();
-        baRegion.insert(10101, "Bratislava I");
-        baRegion.insert(10102, "Bratislava II");
-        baRegion.insert(10103, "Bratislava III");
-        baRegion.insert(10104, "Bratislava IV");
-        baRegion.insert(10105, "Bratislava V");
-        baRegion.insert(10106, "Malacky");
-        baRegion.insert(10107, "Pezinok");
-        baRegion.insert(10108, "Senec");
-        regions.insert(101, baRegion);
+    private void initRegionsAndDistricts() {
+        Map<Integer, int[]> data = new LinkedHashMap<>();
+        data.put(101, new int[]{10101, 10102, 10103, 10104, 10105, 10106, 10107, 10108}); // Bratislavský
+        data.put(201, new int[]{20101, 20102, 20103, 20104, 20105, 20106, 20107});         // Trnavský
+        data.put(301, new int[]{30101, 30102, 30103, 30104, 30105, 30106, 30107});         // Trenčiansky
+        data.put(401, new int[]{40101, 40102, 40103, 40104, 40105, 40106, 40107, 40108}); // Nitriansky
+        data.put(501, new int[]{50101, 50102, 50103, 50104, 50105, 50106, 50107});         // Žilinský
+        data.put(601, new int[]{60101, 60102, 60103, 60104, 60105, 60106, 60107, 60108}); // Banskobystrický
+        data.put(701, new int[]{70101, 70102, 70103, 70104, 70105, 70106, 70107});         // Prešovský
+        data.put(801, new int[]{80101, 80102, 80103, 80104, 80105, 80106});                // Košický
 
-// Trnavský kraj (201)
-        var ttRegion = new BSTree<Integer, String>();
-        ttRegion.insert(20101, "Dunajská Streda");
-        ttRegion.insert(20102, "Galanta");
-        ttRegion.insert(20103, "Hlohovec");
-        ttRegion.insert(20104, "Piešťany");
-        ttRegion.insert(20105, "Senica");
-        ttRegion.insert(20106, "Skalica");
-        ttRegion.insert(20107, "Trnava");
-        regions.insert(201, ttRegion);
 
-// Trenčiansky kraj (301)
-        var tnRegion = new BSTree<Integer, String>();
-        tnRegion.insert(30101, "Bánovce nad Bebravou");
-        tnRegion.insert(30102, "Ilava");
-        tnRegion.insert(30103, "Myjava");
-        tnRegion.insert(30104, "Nové Mesto nad Váhom");
-        tnRegion.insert(30105, "Partizánske");
-        tnRegion.insert(30106, "Považská Bystrica");
-        tnRegion.insert(30107, "Prievidza");
-        tnRegion.insert(30108, "Púchov");
-        tnRegion.insert(30109, "Trenčín");
-        regions.insert(301, tnRegion);
+        for (Map.Entry<Integer, int[]> entry : data.entrySet()) {
+            int regionCode = entry.getKey();
+            int[] districtCodes = entry.getValue();
 
-// Nitriansky kraj (401)
-        var nrRegion = new BSTree<Integer, String>();
-        nrRegion.insert(40101, "Komárno");
-        nrRegion.insert(40102, "Levice");
-        nrRegion.insert(40103, "Nitra");
-        nrRegion.insert(40104, "Nové Zámky");
-        nrRegion.insert(40105, "Šaľa");
-        nrRegion.insert(40106, "Topoľčany");
-        nrRegion.insert(40107, "Zlaté Moravce");
-        regions.insert(401, nrRegion);
+            var districtTree = new BSTree<Integer, District>();
 
-// Žilinský kraj (501)
-        var zaRegion = new BSTree<Integer, String>();
-        zaRegion.insert(50101, "Bytča");
-        zaRegion.insert(50102, "Čadca");
-        zaRegion.insert(50103, "Dolný Kubín");
-        zaRegion.insert(50104, "Kysucké Nové Mesto");
-        zaRegion.insert(50105, "Liptovský Mikuláš");
-        zaRegion.insert(50106, "Martin");
-        zaRegion.insert(50107, "Námestovo");
-        zaRegion.insert(50108, "Ružomberok");
-        zaRegion.insert(50109, "Turčianske Teplice");
-        zaRegion.insert(50110, "Tvrdošín");
-        zaRegion.insert(50111, "Žilina");
-        regions.insert(501, zaRegion);
+            for (int districtCode : districtCodes) {
+                var workplacesTree = new BSTree<Integer, Workplace>();
 
-// Banskobystrický kraj (601)
-        var bbRegion = new BSTree<Integer, String>();
-        bbRegion.insert(60101, "Banská Bystrica");
-        bbRegion.insert(60102, "Brezno");
-        bbRegion.insert(60103, "Detva");
-        bbRegion.insert(60104, "Krupina");
-        bbRegion.insert(60105, "Lučenec");
-        bbRegion.insert(60106, "Poltár");
-        bbRegion.insert(60107, "Revúca");
-        bbRegion.insert(60108, "Rimavská Sobota");
-        bbRegion.insert(60109, "Veľký Krtíš");
-        bbRegion.insert(60110, "Zvolen");
-        bbRegion.insert(60111, "Žarnovica");
-        bbRegion.insert(60112, "Žiar nad Hronom");
-        regions.insert(601, bbRegion);
+                for (int i = 1; i <= 15; ++i) {
+                    int workplaceId = i * 50 + districtCode;
+                    var workplace = new Workplace(workplaceId);
+                    workplacesTree.insert(workplaceId, workplace);
+                    this.workplaces.insert(workplaceId, workplace);
+                }
 
-// Prešovský kraj (701)
-        var poRegion = new BSTree<Integer, String>();
-        poRegion.insert(70101, "Bardejov");
-        poRegion.insert(70102, "Humenné");
-        poRegion.insert(70103, "Kežmarok");
-        poRegion.insert(70104, "Levoča");
-        poRegion.insert(70105, "Medzilaborce");
-        poRegion.insert(70106, "Poprad");
-        poRegion.insert(70107, "Prešov");
-        poRegion.insert(70108, "Sabinov");
-        poRegion.insert(70109, "Snina");
-        poRegion.insert(70110, "Stará Ľubovňa");
-        poRegion.insert(70111, "Stropkov");
-        poRegion.insert(70112, "Svidník");
-        poRegion.insert(70113, "Vranov nad Topľou");
-        regions.insert(701, poRegion);
+                var district = new District(districtCode, workplacesTree);
+                districtTree.insert(districtCode, district);
+                this.districts.insert(districtCode, district);
+            }
 
-// Košický kraj (801)
-        var keRegion = new BSTree<Integer, String>();
-        keRegion.insert(80101, "Gelnica");
-        keRegion.insert(80102, "Košice I");
-        keRegion.insert(80103, "Košice II");
-        keRegion.insert(80104, "Košice III");
-        keRegion.insert(80105, "Košice IV");
-        keRegion.insert(80106, "Košice-okolie");
-        keRegion.insert(80107, "Michalovce");
-        keRegion.insert(80108, "Rožňava");
-        keRegion.insert(80109, "Sobrance");
-        keRegion.insert(80110, "Spišská Nová Ves");
-        keRegion.insert(80111, "Trebišov");
-        regions.insert(801, keRegion);
+            var region = new Region(regionCode, districtTree);
+            this.regions.insert(regionCode, region);
+        }
 
     }
 
+
+
+
     @Override
-    public void save(PCR entity) {
+    public void save(PCRTest entity) {
+        this.testsById.insert(entity.id(), entity);
+
+        int region = entity.region();
+        int district = entity.district();
+        int workplace = entity.workplace();
+
+        this.regions.find(region).get().getDistricts().find(district).get().getWorkplaces().find(workplace).get().addPCRTest(entity);
+
 
     }
 
@@ -143,18 +87,17 @@ public class PCRRepository implements Repository<PCR>
 
     }
 
-    public List<PCR> findByPatientId(int id) {
-        //3
+    public List<PCRTest> findByPatientId(int id) {
         return null;
     }
 
-    public List<PCR> findByIdWorkPlace(int id) {
+    public List<PCRTest> findByIdWorkPlace(int id) {
         //3
         return null;
     }
 
     @Override
-    public PCR findById(int id) {
+    public PCRTest findById(int id) {
 
         //hashMap(testy, strom)
         //operacie 1,
@@ -162,21 +105,137 @@ public class PCRRepository implements Repository<PCR>
     }
 
     @Override
-    public List<PCR> findByDistrictId(int id) {
-        //get district by id
-        //iterate over his workplaces
-        //find
-        return null;
+    public List<PCRTest> findByDistrictId(int id) {
+        return List.of();
     }
 
-    @Override
-    public List<PCR> findByRegionId(int id) {
-        //iterate over his districts
-        return null;
+
+    //v service mi da aj pozitivne(aplikovat aj na 10 aj na 11)
+    public List<PCRTest> findTestByDistrictId(int districtId, LocalDateTime from, LocalDateTime to) {
+        var districtOpt = this.districts.find(districtId);
+        if (districtOpt.isEmpty()) return List.of();
+
+        var district = districtOpt.get();
+        var allWorkplaces = district.getWorkplaces().inOrderValues();
+
+        List<PCRTest> result = new ArrayList<>();
+
+        for (var workplace : allWorkplaces) {
+            var testsInRange = workplace.getPcrTests().intervalSearch(from, to);
+            result.addAll(testsInRange);
+        }
+
+        return result;
     }
 
-    @Override
-    public List<PCR> findByDateBetween(LocalDate from, LocalDate to) {
-        return null;
+    public List<PCRTest> findTestsByIdPatient(int id) {
+        return this.testsByDate.inOrderValues().stream().filter(test -> test.id() == id).toList();
     }
+
+
+    //filtracia v service podla pozitivity (uloha 6 a 7 12 )
+    @Override
+    public List<PCRTest> findByRegionId(int regionId, LocalDateTime from, LocalDateTime to) {
+        var regionOpt = this.regions.find(regionId);
+        if (regionOpt.isEmpty()) return List.of();
+
+        var region = regionOpt.get();
+        var allDistricts = region.getDistricts().inOrderValues();
+
+        List<PCRTest> result = new ArrayList<>();
+
+        for (var district : allDistricts) {
+            var allWorkplaces = district.getWorkplaces().inOrderValues();
+
+            for (var workplace : allWorkplaces) {
+                var testsInRange = workplace.getPcrTests().intervalSearch(from, to);
+                result.addAll(testsInRange);
+            }
+        }
+
+        return result;
+    }
+
+    //filtracia v service podla pozitivity (uloha 8 a 9)
+    @Override
+    public List<PCRTest> findByDateBetween(LocalDateTime from, LocalDateTime to) {
+        List<PCRTest> result = new ArrayList<>();
+
+        var allRegions = this.regions.inOrderValues();
+
+        for (var region : allRegions) {
+            var allDistricts = region.getDistricts().inOrderValues();
+
+            for (var district : allDistricts) {
+                var allWorkplaces = district.getWorkplaces().inOrderValues();
+
+                for (var workplace : allWorkplaces) {
+                    var testsInRange = workplace.getPcrTests().intervalSearch(from, to);
+                    result.addAll(testsInRange);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    //14
+    public List<Patient> findTestByDistrict(LocalDateTime from, LocalDateTime to) {
+        List<PCRTest> result = new ArrayList<>();
+
+        var allDistricts = this.districts.inOrderValues();
+
+
+        for (var district : allDistricts) {
+            var workplaces = district.getWorkplaces().inOrderValues();
+            PCRTest testCandidate = null;
+            for (var workplace : workplaces) {
+                var testsInRange = workplace.getPcrTests().intervalSearch(from, to);
+
+                var bestTest = testsInRange.stream()
+                        .max(Comparator.comparingDouble(PCRTest::value))
+                        .orElse(null);
+
+                if (bestTest != null && (testCandidate == null || bestTest.value() > testCandidate.value())) {
+                    testCandidate = bestTest;
+                }
+            }
+            result.add(testCandidate); //tu bude Patient
+
+        }
+
+        return result;
+    }
+
+    //15
+    public List<District> findDistricts(LocalDateTime from, LocalDateTime to) {
+
+        var allDistricts = this.districts.inOrderValues();
+        Map<District, Integer> map = new HashMap<>();
+
+
+        for (var district : allDistricts) {
+            var workplaces = district.getWorkplaces().inOrderValues();
+
+            int count = 0;
+            for (var workplace : workplaces) {
+                var testsInRange = workplace.getPcrTests().intervalSearch(from, to);
+                count += testsInRange.size();
+            }
+            map.put(district, count);
+        }
+
+        List<District> result = map.entrySet().stream()
+                .sorted(Map.Entry.<District, Integer>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .toList();
+
+
+        return result;
+    }
+
+
+
+
+
 }

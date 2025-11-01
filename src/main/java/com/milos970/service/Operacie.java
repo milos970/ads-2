@@ -1,8 +1,7 @@
 package com.milos970.service;
 
-import com.milos970.model.PCR;
+import com.milos970.model.PCRTest;
 import com.milos970.repository.PCRRepository;
-import com.milos970.repository.PatientRepository;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -13,7 +12,7 @@ public class Operacie {
     private final PatientRepository patientRepository = new PatientRepository();
 
     public void vlozPCR(LocalDate date, String personId, int id, int district, boolean result, double value, String note) {
-        var pcr = new PCR(date, personId, id, district, result, value, note);
+        var pcr = new PCRTest(date, personId, id, district, result, value, note);
     }
 
     public void three(int id) {

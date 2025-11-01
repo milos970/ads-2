@@ -2,7 +2,7 @@ package com.milos970.structure;
 
 import java.util.Optional;
 
-public interface Tree<K extends Comparable<K>, V>
+public interface Tree<K extends Comparable< ? super K>, V>
 {
     V insert(K key, V Value);
     Optional<V> find(K key);

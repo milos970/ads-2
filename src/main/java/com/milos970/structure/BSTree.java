@@ -2,7 +2,7 @@ package com.milos970.structure;
 
 import java.util.*;
 
-public  class BSTree<K extends Comparable<K>,V> implements Tree<K,V>
+public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
 {
     protected BSTNode<K,V> root;
     protected int size;
@@ -137,6 +137,16 @@ public  class BSTree<K extends Comparable<K>,V> implements Tree<K,V>
         return nodes;
     }
 
+    public List<V> inOrderValues() {
+        List<V> values = new LinkedList<>();
+        for (BSTNode<K, V> node : inOrder()) {
+            values.add(node.value);
+        }
+        return values;
+    }
+
+
+
 
     @Override
     public V delete(K key) {
@@ -211,7 +221,7 @@ public  class BSTree<K extends Comparable<K>,V> implements Tree<K,V>
     }
 
 
-    protected List<BSTNode<K, V>> intervalSearch(K key1, K key2) {
+    public List<V> intervalSearch(K key1, K key2) {
 
         return null;
     }
@@ -220,7 +230,7 @@ public  class BSTree<K extends Comparable<K>,V> implements Tree<K,V>
 
 
 
-    public static class BSTNode<K extends Comparable<K>,V> extends Node<K,V> {
+    public static class BSTNode<K extends Comparable<? super K>,V> extends Node<K,V> {
 
         private BSTNode<K, V> left;
         private BSTNode<K, V> right;
