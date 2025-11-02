@@ -1,8 +1,5 @@
 package com.milos970.repository;
 
-import com.milos970.model.Patient;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

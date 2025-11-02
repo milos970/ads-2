@@ -9,8 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ValidationTest
 {
@@ -84,7 +83,7 @@ public class ValidationTest
             assertEquals(expectedHeight, node.height());
         }
         for (int j = 1; j < inorder.size(); j++) {
-            assertTrue(inorder.get(j-1).key < inorder.get(j).key);
+            assertTrue(inorder.get(j-1).getKey() < inorder.get(j).getKey());
         }
     }
 
@@ -117,7 +116,7 @@ public class ValidationTest
 
         List<BSTree.BSTNode<Integer, String>> inorder = bst.inOrder();
         for (int j = 1; j < inorder.size(); ++j)
-            assertTrue(inorder.get(j - 1).key < inorder.get(j).key);
+            assertTrue(inorder.get(j - 1).getKey() < inorder.get(j).getKey());
 
         for (Integer key : randElements) {
             bst.delete(key);
@@ -148,10 +147,14 @@ public class ValidationTest
                     insertedKeys.remove(index);
                 } else if (rand < 0.6) {
                     tree.insert(randKey, "VALUE");
-
                     insertedKeys.add(randKey);
                 } else {
-                    tree.find(randKey);
+                    if (insertedKeys.contains(randKey)) {
+                        assertEquals(insertedKeys.get(randKey), tree.find(randKey).get());
+                    } else {
+                        assertTrue(tree.find(randKey).isEmpty());
+                    }
+
                 }
             }
     }

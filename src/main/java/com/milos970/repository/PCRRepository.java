@@ -1,28 +1,30 @@
 package com.milos970.repository;
 
 import com.milos970.model.PCRTest;
-import com.milos970.model.Patient;
 import com.milos970.structure.BSTree;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class PCRRepository implements Repository<PCRTest> {
-
+public final class PCRRepository  {
     private final BSTree<Integer, Region> regions;
     private final BSTree<Integer, District> districts;
     private final BSTree<Integer, Workplace> workplaces;
 
-    private final BSTree<LocalDateTime, PCRTest> testsByDate;
     private final BSTree<Integer, PCRTest> testsById;
-    private final BSTree<Double, PCRTest> testsById;
+
+    private final BSTree<LocalDateTime, PCRTest> positiveTestsByDate;
+    private final BSTree<LocalDateTime, PCRTest> negativeTestsBYDate;
+
 
     public PCRRepository() {
         this.testsById = new BSTree<>();
         this.regions = new BSTree<>();
         this.districts = new BSTree<>();
         this.workplaces = new BSTree<>();
-        this.testsByDate = new BSTree<>();
+
+        this.positiveTestsByDate = new BSTree<>();
+        this.negativeTestsBYDate = new BSTree<>();
 
         initRegionsAndDistricts();
     }
@@ -68,8 +70,6 @@ public class PCRRepository implements Repository<PCRTest> {
 
 
 
-
-    @Override
     public void save(PCRTest entity) {
         this.testsById.insert(entity.id(), entity);
 
@@ -82,60 +82,153 @@ public class PCRRepository implements Repository<PCRTest> {
 
     }
 
-    @Override
+
     public void removeById(int id) {
-
+        PCRTest test = this.testsById.delete(id);
+        this.negativeTestsBYDate.delete(test.date());
+        this.positiveTestsByDate.delete(test.date());
     }
 
-    public List<PCRTest> findByPatientId(int id) {
-        return null;
-    }
-
-    public List<PCRTest> findByIdWorkPlace(int id) {
-        //3
-        return null;
-    }
-
-    @Override
-    public PCRTest findById(int id) {
-
-        //hashMap(testy, strom)
-        //operacie 1,
-        return null;
-    }
-
-    @Override
-    public List<PCRTest> findByDistrictId(int id) {
-        return List.of();
+    public Optional<PCRTest> findById(int id)
+    {
+        return this.testsById.find(id);
     }
 
 
-    //v service mi da aj pozitivne(aplikovat aj na 10 aj na 11)
-    public List<PCRTest> findTestByDistrictId(int districtId, LocalDateTime from, LocalDateTime to) {
-        var districtOpt = this.districts.find(districtId);
-        if (districtOpt.isEmpty()) return List.of();
+    public Optional<District> findDistrictById(int id) {
+        return this.districts.find(id);
+    }
 
-        var district = districtOpt.get();
+    public Optional<Region> findRegionById(int id) {
+        return this.regions.find(id);
+    }
+
+    public Optional<Workplace> findWorkplaceById(int id) {
+        return this.workplaces.find(id);
+    }
+
+    //4,5
+    public Iterable<PCRTest> findAllPositiveByDistrict(District district, LocalDateTime from, LocalDateTime to) {
+        return this.findTestsDistrict(district, from, to,true);
+    }
+
+    public Iterable<PCRTest> findAllByDistrict(District district, LocalDateTime from, LocalDateTime to) {
+        return this.findTestsDistrict(district, from, to,false);
+    }
+
+    private Iterable<PCRTest> findTestsDistrict(District district, LocalDateTime from, LocalDateTime to, boolean onlyPositive) {
         var allWorkplaces = district.getWorkplaces().inOrderValues();
 
         List<PCRTest> result = new ArrayList<>();
 
-        for (var workplace : allWorkplaces) {
-            var testsInRange = workplace.getPcrTests().intervalSearch(from, to);
-            result.addAll(testsInRange);
+        for (Workplace workplace : allWorkplaces) {
+
+            if (onlyPositive) {
+                result.addAll(workplace.getPositiveTests().intervalSearch(from, to));
+            } else {
+                result.addAll(workplace.getPositiveTests().intervalSearch(from, to));
+                result.addAll(workplace.getNegativeTests().intervalSearch(from, to));
+            }
         }
 
         return result;
     }
+    //4
 
-    public List<PCRTest> findTestsByIdPatient(int id) {
-        return this.testsByDate.inOrderValues().stream().filter(test -> test.id() == id).toList();
+    //6,7
+    public Iterable<PCRTest> findAllByRegion(Region region, LocalDateTime from, LocalDateTime to) {
+        return this.findTestsByRegion(region, from, to, false);
+    }
+
+    public Iterable<PCRTest> findAllPositiveByRegion(Region region, LocalDateTime from, LocalDateTime to) {
+        return this.findTestsByRegion(region, from, to, true);
+    }
+
+    private Iterable<PCRTest> findTestsByRegion(Region region, LocalDateTime from, LocalDateTime to, boolean onlyPositive) {
+        var districts = region.getDistricts().inOrderValues();
+        List<PCRTest> allTests = new ArrayList<>();
+
+        for (District district : districts) {
+            var workplaces = district.getWorkplaces().inOrderValues();
+
+            for (Workplace workplace : workplaces) {
+                if (onlyPositive) {
+                    allTests.addAll(workplace.getPositiveTests().intervalSearch(from, to));
+                } else {
+                    allTests.addAll(workplace.getPositiveTests().intervalSearch(from, to));
+                    allTests.addAll(workplace.getNegativeTests().intervalSearch(from, to));
+                }
+            }
+        }
+
+        return allTests;
+    }
+    //6,7
+
+
+    //8,9
+    public Iterable<PCRTest> findAllPositiveBetweenDates(LocalDateTime from, LocalDateTime to) {
+        return this.findTestsBetweenDates(from, to, true);
+    }
+
+    public Iterable<PCRTest> findAllBetweenDates(LocalDateTime from, LocalDateTime to) {
+        return this.findTestsBetweenDates(from, to, false);
     }
 
 
-    //filtracia v service podla pozitivity (uloha 6 a 7 12 )
-    @Override
-    public List<PCRTest> findByRegionId(int regionId, LocalDateTime from, LocalDateTime to) {
+    private Iterable<PCRTest> findTestsBetweenDates(LocalDateTime from, LocalDateTime to, boolean onlyPositive) {
+        List<PCRTest> allTests = new ArrayList<>();
+
+        if (!onlyPositive) {
+            allTests.addAll(this.negativeTestsBYDate.intervalSearch(from,to));
+        }
+
+        allTests.addAll(this.positiveTestsByDate.intervalSearch(from,to));
+
+        return allTests;
+    }
+    //8,9
+
+
+
+
+    public Iterable<PCRTest> findAll(LocalDateTime from, LocalDateTime to) {
+        return this.positiveTestsByDate.intervalSearch(from, to);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public List<PCRTest> findAllByRegionId(int regionId, LocalDateTime from, LocalDateTime to) {
         var regionOpt = this.regions.find(regionId);
         if (regionOpt.isEmpty()) return List.of();
 
@@ -156,31 +249,10 @@ public class PCRRepository implements Repository<PCRTest> {
         return result;
     }
 
-    //filtracia v service podla pozitivity (uloha 8 a 9)
-    @Override
-    public List<PCRTest> findByDateBetween(LocalDateTime from, LocalDateTime to) {
-        List<PCRTest> result = new ArrayList<>();
 
-        var allRegions = this.regions.inOrderValues();
-
-        for (var region : allRegions) {
-            var allDistricts = region.getDistricts().inOrderValues();
-
-            for (var district : allDistricts) {
-                var allWorkplaces = district.getWorkplaces().inOrderValues();
-
-                for (var workplace : allWorkplaces) {
-                    var testsInRange = workplace.getPcrTests().intervalSearch(from, to);
-                    result.addAll(testsInRange);
-                }
-            }
-        }
-
-        return result;
-    }
 
     //14
-    public List<Patient> findTestByDistrict(LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> findAllByDistrict(LocalDateTime from, LocalDateTime to) {
         List<PCRTest> result = new ArrayList<>();
 
         var allDistricts = this.districts.inOrderValues();
@@ -190,7 +262,7 @@ public class PCRRepository implements Repository<PCRTest> {
             var workplaces = district.getWorkplaces().inOrderValues();
             PCRTest testCandidate = null;
             for (var workplace : workplaces) {
-                var testsInRange = workplace.getPcrTests().intervalSearch(from, to);
+                var testsInRange = workplace.getPositiveTests().intervalSearch(from, to);
 
                 var bestTest = testsInRange.stream()
                         .max(Comparator.comparingDouble(PCRTest::value))
@@ -200,7 +272,7 @@ public class PCRRepository implements Repository<PCRTest> {
                     testCandidate = bestTest;
                 }
             }
-            result.add(testCandidate); //tu bude Patient
+            result.add(testCandidate);
 
         }
 
@@ -208,18 +280,17 @@ public class PCRRepository implements Repository<PCRTest> {
     }
 
     //15
-    public List<District> findDistricts(LocalDateTime from, LocalDateTime to) {
+    public List<District> findDistrictsBetweenDates(LocalDateTime from, LocalDateTime to) {
 
         var allDistricts = this.districts.inOrderValues();
         Map<District, Integer> map = new HashMap<>();
-
 
         for (var district : allDistricts) {
             var workplaces = district.getWorkplaces().inOrderValues();
 
             int count = 0;
             for (var workplace : workplaces) {
-                var testsInRange = workplace.getPcrTests().intervalSearch(from, to);
+                var testsInRange = workplace.getPositiveTests().intervalSearch(from, to);
                 count += testsInRange.size();
             }
             map.put(district, count);

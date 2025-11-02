@@ -118,7 +118,7 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
 
     }
 
-    protected List<BSTNode<K, V>> inOrder() {
+    public List<BSTNode<K, V>> inOrder() {
         Deque<BSTNode<K,V>> stack = new ArrayDeque<>();
         List<BSTNode<K,V>> nodes = new LinkedList<>();
 
@@ -187,24 +187,33 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
 
     @Override
     public K min() {
+        return this.minNode().key;
+    }
+
+    protected BSTNode<K,V> minNode() {
         BSTNode<K,V> node = this.root;
         while (node.hasLeftSon())
         {
             node = node.leftSon();
         }
 
-        return node.key;
+        return node;
     }
 
     @Override
     public K max() {
+        return this.maxNode().key;
+    }
+
+
+    protected BSTNode<K,V> maxNode() {
         BSTNode<K,V> node = this.root;
         while (node.hasRightSon())
         {
             node = node.rightSon();
         }
 
-        return node.key;
+        return node;
     }
 
 
@@ -222,8 +231,46 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
 
 
     public List<V> intervalSearch(K key1, K key2) {
+        List<V> result = new ArrayList<>();
 
-        return null;
+        if (max().compareTo(key1) < 0 || min().compareTo(key2) > 0) {
+            return result;
+        }
+
+        BSTNode<K,V> node = this.minNode();
+
+        while (node.key != null || node.key.compareTo(key2) > 0) {
+            if (node.key.compareTo(key1)  >= 0 && node.key.compareTo(key2) <= 0) {
+                result.add(node.value);
+            }
+
+            if (node.hasRightSon()) {
+                node = node.rightSon();
+                while (node.hasLeftSon()) {
+                    node = node.leftSon();
+                }
+                continue;
+            }
+
+            BSTNode<K,V> parent = node.parent();
+            BSTNode<K,V> son = node;
+
+            while (parent != null && son == parent.rightSon()) {
+                son = parent;
+                parent = parent.parent();
+            }
+
+
+
+            node = parent;
+
+
+
+
+        }
+
+
+        return result;
     }
 
 
@@ -239,6 +286,8 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
         public BSTNode(K key, V value) {
             super(key, value);
         }
+
+
 
         public void setParent(BSTNode<K,V> node) {
             this.parent = node;

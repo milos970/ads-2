@@ -74,6 +74,9 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
             int balance = calculateBalance(parent);
 
             AvlNode<K, V> next = (AvlNode<K, V>)parent.parent();
+            if (balance == 0) {
+                break;
+            }
             if (balance < -1)
             {
                 if (calculateBalance((AvlNode<K, V>) parent.rightSon()) > 0)
@@ -140,6 +143,14 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
 
             predecessor.height = calculateHeight(predecessor);
             int balance = calculateBalance(predecessor);
+
+            if (predecessor.equals(this.root)) {
+                System.out.println(656);
+            }
+
+            if (balance == -1 || balance == 1) {
+                break;
+            }
 
             AvlNode<K, V> next = (AvlNode<K, V>)predecessor.parent();
             if (balance < -1)
