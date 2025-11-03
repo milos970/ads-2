@@ -1,4 +1,4 @@
-package com.milos970.dto;
+package com.milos970.model.dto;
 
 import java.time.LocalDate;
 

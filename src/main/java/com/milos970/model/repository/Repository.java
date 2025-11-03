@@ -1,4 +1,4 @@
-package com.milos970.repository;
+package com.milos970.model.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;

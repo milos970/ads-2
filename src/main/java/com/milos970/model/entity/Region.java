@@ -1,4 +1,4 @@
-package com.milos970.repository;
+package com.milos970.model.entity;
 
 import com.milos970.structure.BSTree;
 

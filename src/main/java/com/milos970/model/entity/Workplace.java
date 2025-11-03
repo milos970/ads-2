@@ -1,6 +1,5 @@
-package com.milos970.repository;
+package com.milos970.model.entity;
 
-import com.milos970.model.PCRTest;
 import com.milos970.structure.BSTree;
 
 import java.time.LocalDateTime;

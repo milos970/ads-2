@@ -274,6 +274,30 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
     }
 
 
+    public List<V> levelOrder() {
+        Queue<BSTNode<K,V>> nodes = new ArrayDeque<>();
+        List<V> values = new ArrayList<>();
+
+        var node = this.root;
+        nodes.add(node);
+
+        while (!nodes.isEmpty()) {
+            node = nodes.poll();
+            values.add(node.value);
+
+            if (node.hasLeftSon()) {
+                nodes.add(node.leftSon());
+            }
+
+            if (node.hasRightSon()) {
+                nodes.add(node.rightSon());
+            }
+        }
+
+        return values;
+    }
+
+
 
 
 

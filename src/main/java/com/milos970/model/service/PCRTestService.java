@@ -1,27 +1,25 @@
-package com.milos970.service;
+package com.milos970.model.service;
 
-import com.milos970.dto.PCRTestRequest;
-import com.milos970.model.PCRTest;
-import com.milos970.model.Patient;
-import com.milos970.repository.*;
+import com.milos970.model.dto.PCRTestRequest;
+import com.milos970.model.entity.*;
+import com.milos970.model.repository.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 public class PCRTestService {
 
-    private final PCRRepository pcrRepository;
+    private final PCRTestRepository pcrTestRepository;
     private final PatientRepository patientRepository;
 
-    public PCRTestService(PCRRepository pcrRepository, PatientRepository patientRepository) {
-        this.pcrRepository = pcrRepository;
+    public PCRTestService(PCRTestRepository pcrTestRepository, PatientRepository patientRepository) {
+        this.pcrTestRepository = pcrTestRepository;
         this.patientRepository = patientRepository;
     }
 
     public void one(PCRTestRequest pcrTestRequest)
     {
-        this.pcrRepository.save(null);
+        this.pcrTestRepository.save(null);
     }
 
     public Optional<PCRTest> two(int pcrTestId, String patientId) {
@@ -36,41 +34,41 @@ public class PCRTestService {
     }
 
     public Iterable<PCRTest> four(int districtId, LocalDateTime from, LocalDateTime to) {
-        District district = this.pcrRepository.findDistrictById(districtId).
+        District district = this.pcrTestRepository.findDistrictById(districtId).
                 orElseThrow(() -> new NoSuchElementException("District not found: " + districtId));
-        return this.pcrRepository.findAllPositiveByDistrict(district, from, to);
+        return this.pcrTestRepository.findAllPositiveByDistrict(district, from, to);
     }
 
     public Iterable<PCRTest> five(int districtId, LocalDateTime from, LocalDateTime to) {
-        District district = this.pcrRepository.findDistrictById(districtId).
+        District district = this.pcrTestRepository.findDistrictById(districtId).
                 orElseThrow(() -> new NoSuchElementException("District not found: " + districtId));
-        return this.pcrRepository.findAllByDistrict(district, from, to);
+        return this.pcrTestRepository.findAllByDistrict(district, from, to);
     }
 
     public Iterable<PCRTest> six(int regionId, LocalDateTime from, LocalDateTime to) {
-        Region region = this.pcrRepository.findRegionById(regionId).
+        Region region = this.pcrTestRepository.findRegionById(regionId).
                 orElseThrow(() -> new NoSuchElementException("Region not found: " + regionId));
-        return this.pcrRepository.findAllPositiveByRegion(region, from, to);
+        return this.pcrTestRepository.findAllPositiveByRegion(region, from, to);
     }
 
     public Iterable<PCRTest> seven(int regionId, LocalDateTime from, LocalDateTime to) {
-        Region region = this.pcrRepository.findRegionById(regionId).
+        Region region = this.pcrTestRepository.findRegionById(regionId).
                 orElseThrow(() -> new NoSuchElementException("Region not found: " + regionId));
-        return this.pcrRepository.findAllByRegion(region, from, to);
+        return this.pcrTestRepository.findAllByRegion(region, from, to);
     }
 
 
     public Iterable<PCRTest> eight(LocalDateTime from, LocalDateTime to) {
-        return this.pcrRepository.findAllPositiveBetweenDates(from,to);
+        return this.pcrTestRepository.findAllPositiveBetweenDates(from,to);
     }
 
     public Iterable<PCRTest> nine(LocalDateTime from, LocalDateTime to) {
-        return this.pcrRepository.findAllBetweenDates(from,to);
+        return this.pcrTestRepository.findAllBetweenDates(from,to);
     }
 
     public Iterable<Patient> teen(int districtId, LocalDateTime from, int x) {
 
-        District district = this.pcrRepository.findDistrictById(districtId).
+        District district = this.pcrTestRepository.findDistrictById(districtId).
                 orElseThrow(() -> new NoSuchElementException("District not found: " + districtId));;
 
         var workplaces = district.getWorkplaces().inOrderValues();
@@ -88,7 +86,7 @@ public class PCRTestService {
 
     public Iterable<PCRTest> eleven(int districtId, LocalDateTime from, int x) {
 
-        District district = this.pcrRepository.findDistrictById(districtId).
+        District district = this.pcrTestRepository.findDistrictById(districtId).
                 orElseThrow(() -> new NoSuchElementException("District not found: " + districtId));;
 
         var workplaces = district.getWorkplaces().inOrderValues();
@@ -107,7 +105,7 @@ public class PCRTestService {
 
     public Iterable<PCRTest> twelve(int regionId, LocalDateTime from, int x) {
 
-        Region region = this.pcrRepository.findRegionById(regionId).
+        Region region = this.pcrTestRepository.findRegionById(regionId).
                 orElseThrow(() -> new NoSuchElementException("Region not found: " + regionId));;
 
         var districts = region.getDistricts().inOrderValues();
@@ -130,17 +128,17 @@ public class PCRTestService {
 
     public Iterable<PCRTest> thirteen(LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
-        return this.pcrRepository.findAll(from, to);
+        return this.pcrTestRepository.findAll(from, to);
     }
 
     public Iterable<PCRTest> fourteen(LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
-        return this.pcrRepository.findAllByDistrict(from, to);
+        return this.pcrTestRepository.findAllByDistrict(from, to);
     }
 
     public Iterable<District> fifteen(LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
-        return this.pcrRepository.findDistrictsBetweenDates(from, to);
+        return this.pcrTestRepository.findDistrictsBetweenDates(from, to);
     }
 
     public void eighteen(int testId) {
@@ -152,7 +150,7 @@ public class PCRTestService {
     }
 
     public Iterable<PCRTest> twenty(int testId) {
-        this.pcrRepository.removeById(testId);
+        this.pcrTestRepository.removeById(testId);
 
     }
 
@@ -163,7 +161,7 @@ public class PCRTestService {
         var testsByid = patient.getTestsById().inOrderValues();
 
         for (var test : testsByid) {
-            this.pcrRepository.removeById(test.id());
+            this.pcrTestRepository.removeById(test.id());
         }
         patient.getTestsById().clear();
         patient.getTestsByDate().clear();

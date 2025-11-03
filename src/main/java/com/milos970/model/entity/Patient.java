@@ -1,5 +1,6 @@
-package com.milos970.model;
+package com.milos970.model.entity;
 
+import com.milos970.structure.AVLTree;
 import com.milos970.structure.BSTree;
 
 import java.time.LocalDate;
@@ -20,8 +21,8 @@ public class Patient
         this.surname = surname;
         this.birthday = birthday;
 
-        this.testsById = new BSTree<>();
-        this.testsByDate = new BSTree<>();
+        this.testsById = new AVLTree<>();
+        this.testsByDate = new AVLTree<>();
     }
 
     public void addTest(PCRTest test) {
@@ -35,5 +36,21 @@ public class Patient
 
     public BSTree<LocalDateTime, PCRTest> getTestsByDate() {
         return testsByDate;
+    }
+
+    public String id() {
+        return this.id;
+    }
+
+    public String name() {
+        return this.name;
+    }
+
+    public LocalDate birthday() {
+        return LocalDate.of(this.birthday.getYear(), this.birthday.getMonthValue(), this.birthday.getDayOfMonth());
+    }
+
+    public String surname() {
+        return this.surname;
     }
 }
