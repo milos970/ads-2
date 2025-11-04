@@ -1,15 +1,12 @@
 package com.milos970.model.repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-public interface Repository<T> {
-
-    public void save(T entity);
-    public void removeById(int id);
-    public T findById(int id);
-    public List<T> findByDistrictId(int i, LocalDateTime from, LocalDateTime to);
-    public List<T> findByRegionId(int id);
-    public List<T> findByDateBetween(LocalDateTime from, LocalDateTime to);
-
+public interface Repository<T,K>
+{
+    void save(T entity);
+    Optional<T> findById(K id);
+    void deleteById(K id);
+    List<T> findAll();
 }

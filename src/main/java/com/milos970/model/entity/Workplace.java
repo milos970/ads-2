@@ -17,6 +17,10 @@ public class Workplace
     }
 
 
+    public int id() {
+        return id;
+    }
+
     public void addPositivePCRTest(PCRTest test) {
         this.positiveTests.insert(test.date(), test);
     }

@@ -1,16 +1,17 @@
 package com.milos970.model.service;
 
 import com.milos970.model.entity.*;
-import com.milos970.structure.AVLTree;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public final class Generator
 {
     private final Random random;
 
-    private static final int MAX_NUMBER_OF_REGIONS = 1_000;
-    private static final int MAX_NUMBER_OF_DISTRICTS = 10_000;
+    private static final int MAX_NUMBER_OF_REGIONS = 100;
+    private static final int MAX_NUMBER_OF_DISTRICTS = 1000;
     private static final int MAX_NUMBER_OF_WORKPLACES = 50_000;
     private static final int MAX_NUMBER_OF_PATIENTS = 100_000;
     private static final int MAX_NUMBER_OF_PCR_TESTS = 1_000_000;
@@ -48,51 +49,138 @@ public final class Generator
         this.random = new Random();
     }
 
+    public void generateAll()
+    {
+        Region[] regions = new Region[numberOfRegions];
+        Arrays.setAll(regions, i -> new Region(i + 1));
 
-    public Iterable<Region> generateRegions(int number) {
+        District[] districts = new District[numberOfDistricts];
+        Arrays.setAll(districts, i -> new District((i + 1) * numberOfDistricts));
 
-        List<Region> regionList = new ArrayList<>();
+        Workplace[] workplaces = new Workplace[numberOfWorkplaces];
+        Arrays.setAll(workplaces, i -> new Workplace((i + 1) * numberOfWorkplaces));
 
-        for (int i = 1; i <= numberOfRegions; ++i) {
-            regionList.add(new Region(i, new AVLTree<Integer, District>()));
+        Patient[] patients = new Patient[numberOfPatients];
+        Arrays.setAll(patients, i -> generatePatient());
+
+        PCRTest[] tests = new PCRTest[numberOfTests];
+        for (int i = 0; i < numberOfDistricts; ++i)
+        {
+            regions[this.random.nextInt(regions.length)].getDistricts().insert(districts[i].id(),districts[i]);
         }
 
-        return regionList;
-    }
-
-    public Iterable<District> generateDistricts() {
-        List<District> districtList = new ArrayList<>();
-
-        for (int i = 1; i <= numberOfDistricts; ++i) {
-            districtList.add(new District(i*10, new AVLTree<Integer, Workplace>()));
+        for (int i = 0; i < numberOfWorkplaces; ++i)
+        {
+            districts[this.random.nextInt(districts.length)].getWorkplaces().insert(workplaces[i].id(),workplaces[i]);
         }
 
-        return districtList;
-    }
-
-    public Iterable<Workplace> generateWorkplaces() {
-        List<Workplace> workplaceList = new ArrayList<>();
-
-        for (int i = 1; i <= numberOfDistricts; ++i) {
-            workplaceList.add(new Workplace(i * 100));
+        for (int i = 0; i < numberOfTests; ++i)
+        {
+            var region = regions[this.random.nextInt(regions.length)];
+            var district = districts[this.random.nextInt(districts.length)];
+            var workplace = workplaces[this.random.nextInt(workplaces.length)];
+            tests[i] = generatePCRTest(patients[this.random.nextInt(patients.length)].id(),district.id(), region.id(), workplace.id());
         }
 
-        return workplaceList;
     }
 
-    public Iterable<PCRTest> generatePCRTests() {
-        List<PCRTest> testList = new ArrayList<>();
+    private static PCRTest generatePCRTest(String idPatient, int idDistrict, int idRegion, int idWorkplace) {
+        Random random = new Random();
+        int idTest = random.nextInt();
+        double value = random.nextDouble();
+        boolean result = value > 0.5 ? true : false;
+        String note = "FSDFSDFSDFDSF";
 
-        for (int i = 1; i <= numberOfTests; ++i) {
-            testList.add(new PCRTest(i * 100));
+        return new PCRTest(generateDateTime(),idPatient, random.nextInt(), idDistrict, idRegion, idWorkplace, result, value,note);
+    }
+
+
+
+    private static Patient generatePatient() {
+        Random random = new Random();
+
+        String[] menaMuz = {
+                "Ján","Peter","Martin","Marek","Lukáš","Tomáš","Michal","Andrej","Filip","Adam",
+                "Patrik","Róbert","Viktor","Juraj","Roman","Marián","Samuel","Pavol","Dominik","Erik",
+                "Daniel","Richard","Igor","Stanislav","Dušan","Jozef","Karol","Peter","Milan","Štefan",
+                "Boris","Vladimír","Radovan","Tibor","Gabriel","Alan","René","Adrián","Viliam","Rastislav"
+        };
+
+        String[] menaZeny = {
+                "Lucia","Mária","Zuzana","Katarína","Veronika","Petra","Jana","Eva","Monika","Anna",
+                "Kristína","Barbora","Simona","Lenka","Tatiana","Martina","Adriana","Natália","Bianka","Michaela",
+                "Silvia","Andrea","Ivana","Diana","Nina","Dominika","Ela","Mária","Sabina","Tamara",
+                "Viktória","Ema","Laura","Gabriela","Žaneta","Lýdia","Klaudia","Blažena","Karolína","Soňa"
+        };
+
+        String[] priezviska = {
+                "Novák","Kováč","Horváth","Tóth","Varga","Kiss","Baláž","Szabó","Polák","Urban",
+                "Král","Hudec","Chovanec","Hruška","Šimko","Kubiš","Kadlec","Farkaš","Dudáš","Marek",
+                "Bartoš","Benko","Pašek","Doležal","Krajčí","Mach","Černák","Pekár","Žiak","Gregor",
+                "Hollý","Holub","Švec","Moravčík","Kováčik","Krnáč","Vlach","Šimunek","Červeň","Blaško"
+        };
+
+        boolean isZena = random.nextDouble() < 0.5;
+
+        String meno = isZena ? menaZeny[random.nextInt(menaZeny.length)] : menaMuz[random.nextInt(menaMuz.length)];
+        String priezvisko = priezviska[random.nextInt(priezviska.length)];
+
+        if (isZena && !priezvisko.endsWith("á")) {
+            priezvisko += "ová";
         }
 
-        return testList;
-    }
-
-    public Iterable<Patient> generatePatients() {
+        LocalDate birthday = generateBirthday();
+        return new Patient(generateRodCislo(birthday,isZena),meno,priezvisko,birthday);
 
     }
+
+    private static LocalDate generateBirthday() {
+        Random random = new Random();
+        int year = 1955 + random.nextInt(66);
+
+        int month = random.nextInt(12) + 1;
+
+        int day = switch(month) {
+            case 1,3,5,7,8,10,12 -> random.nextInt(31) + 1;
+            case 4,6,9,11 -> random.nextInt(30) + 1;
+            case 2 -> (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? random.nextInt(29) + 1 : random.nextInt(28) + 1;
+            default -> throw new IllegalStateException("Unexpected value: " + month);
+        };
+
+        return LocalDate.of(year, month,day);
+    }
+
+    private static LocalDateTime generateDateTime() {
+        Random random = new Random();
+        int year = 2020 + random.nextInt(6);
+
+        int month = random.nextInt(1,13);
+
+        int maxDays = switch (month) {
+            case 1, 3, 5, 7, 8, 10, 12 -> 31;
+            case 4, 6, 9, 11 -> 30;
+            case 2 -> (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
+            default -> throw new IllegalStateException("Unexpected month: " + month);
+        };
+        int day = random.nextInt(maxDays) + 1;
+
+        int hours = random.nextInt(6,20);
+        int minutes = random.nextInt(60);
+        int seconds = random.nextInt(60);
+
+        return LocalDateTime.of(year, month,day, hours, minutes, seconds);
+    }
+
+
+    private static String generateRodCislo(LocalDate birthday, boolean isZena) {
+        Random random = new Random();
+        int year = birthday.getYear() % 100;
+        int month = birthday.getMonthValue();
+        int day = birthday.getDayOfMonth();
+        int poradie = random.nextInt(10_000);
+        return String.format("%02d%02d%02d/%04d", year, month, day, poradie);
+    }
+
 
 
     //pouzijem AVL, kedze sa jedna o len raz vkladanie a degeneroval by
@@ -106,32 +194,5 @@ public final class Generator
         data.put(601, new int[]{60101, 60102, 60103, 60104, 60105, 60106, 60107, 60108}); // Banskobystrický
         data.put(701, new int[]{70101, 70102, 70103, 70104, 70105, 70106, 70107});         // Prešovský
         data.put(801, new int[]{80101, 80102, 80103, 80104, 80105, 80106});                // Košický
-
-
-        for (Map.Entry<Integer, int[]> entry : data.entrySet()) {
-            int regionCode = entry.getKey();
-            int[] districtCodes = entry.getValue();
-
-            var districtTree = new AVLTree<>();
-
-            for (int districtCode : districtCodes) {
-                var workplacesTree = new AVLTree<Integer, Workplace>();
-
-                for (int i = 1; i <= 15; ++i) {
-                    int workplaceId = i * 50 + districtCode;
-                    var workplace = new Workplace(workplaceId);
-                    workplacesTree.insert(workplaceId, workplace);
-                    this.workplaces.insert(workplaceId, workplace);
-                }
-
-                var district = new District(districtCode, workplacesTree);
-                districtTree.insert(districtCode, district);
-                this.districts.insert(districtCode, district);
-            }
-
-            var region = new Region(regionCode, districtTree);
-            this.regions.insert(regionCode, region);
-        }
-
     }
 }
