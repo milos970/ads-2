@@ -13,8 +13,17 @@ public final class PatientRepository {
         this.database = database;
     }
 
-    public Optional<Patient> findById(String id) {
-        return this.database.findPatientByPk(id);
+    public Optional<Patient> findById(String pk) {
+        return this.database.findPatientByPk(pk);
+    }
+
+    public Patient removeById(String id) {
+        return this.database.deletePatientByPk(id);
+    }
+
+
+    public void save(Patient patient) {
+        this.database.insertIntoTablePatients(patient);
     }
 
 

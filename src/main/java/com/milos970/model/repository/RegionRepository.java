@@ -1,7 +1,7 @@
 package com.milos970.model.repository;
 
 import com.milos970.model.entity.Region;
-import com.milos970.structure.InMemoryDatabase;
+import com.milos970.structure.InMemoryDatabase;import java.util.Optional;
 
 public class RegionRepository
 {
@@ -10,6 +10,15 @@ public class RegionRepository
 
     public RegionRepository(InMemoryDatabase database) {
         this.database = database;
+    }
+
+
+    public Optional<Region> findById(int pk) {
+        return this.database.findRegionByPk(pk);
+    }
+
+    public Region removeById(int id) {
+        return this.database.deleteRegionByPkFromRegionTable(id);
     }
 
 

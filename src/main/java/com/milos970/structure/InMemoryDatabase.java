@@ -54,6 +54,10 @@ public final class InMemoryDatabase
         this.testsById.insert(test.id(), test);
     }
 
+    public void insertIntoTablePatients(Patient patient) {
+        this.patientsById.insert(patient.id(), patient);
+    }
+
     public void insertIntoTablePCRTestByDate(PCRTest test) {
         this.testsById.insert(test.id(), test);
     }
@@ -118,6 +122,35 @@ public final class InMemoryDatabase
         var tests = this.testsByPatientPkSortedByDate.find(test.patientId()).orElseThrow(NoClassDefFoundError::new);
         tests.insert(test.date(), test);
     }
+
+    public Region deleteRegionByPkFromRegionTable(int pk) {
+        return this.regions.delete(pk);
+    }
+
+    public District deleteDistrictByPkFromDistrictTable(int pk) {
+        return this.districts.delete(pk);
+    }
+
+    public Workplace deleteWorkplaceByPkFromWorkplaceTable(int pk) {
+        return this.workplaces.delete(pk);
+    }
+
+    public PCRTest deletePCRTestByPkFromPCRTestsByPkTable(int pk) {
+        return this.testsById.delete(pk);
+    }
+
+    public PCRTest deletePCRTestByPkFromPCRTestsByDateTable(LocalDateTime date) {
+        return this.testsByDate.delete(date);
+    }
+
+    public PCRTest deletePCRTestByPkFromPositivePCRTestsByDateTable(LocalDateTime date) {
+        return this.positiveTestsByDate.delete(date);
+    }
+
+    public Patient deletePatientByPk(String pk) {
+        return this.patientsById.delete(pk);
+    }
+
 
 
 

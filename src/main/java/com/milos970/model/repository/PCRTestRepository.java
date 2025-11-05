@@ -59,12 +59,6 @@ public final class PCRTestRepository {
     }
 
 
-    public void removeById(int id) {
-
-    }
-
-
-
 
 
     //4,5,10
@@ -198,61 +192,6 @@ public final class PCRTestRepository {
 
 
 
-
-
-    //14
-    public List<PCRTest> findAllByDistrict(LocalDateTime from, LocalDateTime to) {
-        List<PCRTest> result = new ArrayList<>();
-
-        var allDistricts = this.database.findAllDistricts();
-
-
-        for (var district : allDistricts) {
-            var workplaces = district.getWorkplaces().inOrderValues();
-            PCRTest testCandidate = null;
-            for (var workplace : workplaces) {
-                var testsInRange = workplace.getPositiveTests().intervalSearch(from, to);
-
-                var bestTest = testsInRange.stream()
-                        .max(Comparator.comparingDouble(PCRTest::value))
-                        .orElse(null);
-
-                if (bestTest != null && (testCandidate == null || bestTest.value() > testCandidate.value())) {
-                    testCandidate = bestTest;
-                }
-            }
-            result.add(testCandidate);
-
-        }
-
-        return result;
-    }
-
-    //15
-    public List<District> findAllDistricts(LocalDateTime from, LocalDateTime to) {
-
-        var allDistricts = this.database.findAllDistricts();
-        Map<District, Integer> map = new HashMap<>();
-
-        for (var district : allDistricts) {
-            var workplaces = district.getWorkplaces().inOrderValues();
-
-            int count = 0;
-            for (var workplace : workplaces) {
-                var testsInRange = workplace.getPositiveTests().intervalSearch(from, to);
-                count += testsInRange.size();
-            }
-            map.put(district, count);
-        }
-
-        List<District> result = map.entrySet().stream()
-                .sorted(Map.Entry.<District, Integer>comparingByValue().reversed())
-                .map(Map.Entry::getKey)
-                .toList();
-
-
-        return result;
-    }
 
     //16
     public List<Region> findAllRegions(LocalDateTime from, LocalDateTime to) {
