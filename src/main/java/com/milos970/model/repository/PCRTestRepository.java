@@ -172,7 +172,9 @@ public final class PCRTestRepository {
 
 
 
-
+public void removeById(int id) {
+        this.database.deletePCRTestByPkFromPCRTestsByPkTable(id);
+}
 
 
 

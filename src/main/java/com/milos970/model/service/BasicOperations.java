@@ -48,19 +48,17 @@ public class BasicOperations {
     public Iterable<PCRTest> five(int districtId, LocalDateTime from, LocalDateTime to) {
         District district = this.districtRepository.findById(districtId).
                 orElseThrow(() -> new NoSuchElementException("District not found: " + districtId));
-        return this.districtRepository.findById(district, from, to);
+        return null; //this.districtRepository.findById(district, from, to);
     }
 
     public Iterable<PCRTest> six(int regionId, LocalDateTime from, LocalDateTime to) {
-        Region region = this.pcrTestRepository.findRegionById(regionId).
-                orElseThrow(() -> new NoSuchElementException("Region not found: " + regionId));
-        return this.pcrTestRepository.findAllPositiveByRegion(region, from, to);
+        Region region = null; //this.pcrTestRepository.findRegionById(regionId).
+        return null; //this.pcrTestRepository.findAllPositiveByRegion(region, from, to);
     }
 
     public Iterable<PCRTest> seven(int regionId, LocalDateTime from, LocalDateTime to) {
-        Region region = this.regionRepository(regionId).
-                orElseThrow(() -> new NoSuchElementException("Region not found: " + regionId));
-        return this.pcrTestRepository.findAllByRegion(region, from, to);
+        Region region = null; //this.regionRepository(regionId).
+        return null; //this.pcrTestRepository.findAllByRegion(region, from, to);
     }
 
 
@@ -92,8 +90,8 @@ public class BasicOperations {
 
     public Iterable<PCRTest> eleven(int districtId, LocalDateTime from, int x) {
 
-        District district = this.pcrTestRepository.findDistrictById(districtId).
-                orElseThrow(() -> new NoSuchElementException("District not found: " + districtId));;
+        District district = null; //this.pcrTestRepository.findDistrictById(districtId).
+
 
         var workplaces = district.getWorkplaces().inOrderValues();
 
@@ -111,8 +109,8 @@ public class BasicOperations {
 
     public Iterable<PCRTest> twelve(int regionId, LocalDateTime from, int x) {
 
-        Region region = this.pcrTestRepository.findRegionById(regionId).
-                orElseThrow(() -> new NoSuchElementException("Region not found: " + regionId));;
+        Region region = null; //this.pcrTestRepository.findRegionById(regionId).
+
 
         var districts = region.getDistricts().inOrderValues();
 
@@ -211,17 +209,17 @@ public class BasicOperations {
     }
 
     public Iterable<PCRTest> twenty(int testId) {
-        this.pcrTestRepository.removeById(testId);
+        return null; //this.pcrTestRepository.removeById(testId);
     }
 
 
     public void twentyOne(String patientId) {
-        Patient patient = this.patientRepository.findById(patientId);
+        Patient patient = this.patientRepository.findById(patientId).orElseThrow(NoSuchElementException::new);
 
         var testsByid = patient.getTestsById().inOrderValues();
 
         for (var test : testsByid) {
-            this.pcrTestRepository.removeById(test.id());
+           // this.pcrTestRepository.re(test.id());
         }
         patient.getTestsById().clear();
         patient.getTestsByDate().clear();

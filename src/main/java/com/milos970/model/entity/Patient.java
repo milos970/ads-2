@@ -22,7 +22,7 @@ public class Patient
         this.birthday = birthday;
 
         this.testsById = new AVLTree<>();
-        this.testsByDate = new AVLTree<>();
+        this.testsByDate = null;
     }
 
     public void addTest(PCRTest test) {

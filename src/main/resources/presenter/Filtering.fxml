@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="filteringTab" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milos970.controller.FilteringController">
+   <children>
+      <HBox layoutX="191.0" layoutY="85.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane prefHeight="321.0" prefWidth="381.0">
+               <children>
+                  <VBox alignment="TOP_CENTER" layoutX="159.0" layoutY="61.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Výber Operácie" />
+                        <RadioButton fx:id="test" mnemonicParsing="false" onAction="#checkCategory" text="PCRTest">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="toggleGroup" />
+                           </toggleGroup></RadioButton>
+                        <RadioButton fx:id="patient" mnemonicParsing="false" onAction="#checkCategory" text="Patient" toggleGroup="$toggleGroup" />
+                        <RadioButton fx:id="district" mnemonicParsing="false" onAction="#checkCategory" text="District" toggleGroup="$toggleGroup" />
+                        <RadioButton fx:id="region" mnemonicParsing="false" onAction="#checkCategory" text="Region" toggleGroup="$toggleGroup" />
+                        <ComboBox fx:id="combobox" onAction="#checkOperation" prefWidth="150.0" promptText="Výber operáciu" />
+                        <ComboBox fx:id="tuComboBox" prefWidth="150.0" />
+                        <DatePicker fx:id="fromDatePicker" />
+                        <TextField fx:id="xTextField" />
+                        <CheckBox fx:id="positiveCheckBox" mnemonicParsing="false" text="Only positive" />
+                        <DatePicker fx:id="toDatePicker" />
+                        <Button mnemonicParsing="false" text="Filter" />
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="321.0" prefWidth="380.0">
+               <children>
+                  <ListView fx:id="listView" layoutX="90.0" layoutY="61.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
