@@ -6,7 +6,7 @@ import com.milos970.model.repository.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class PCRTestService {
+public class BasicOperations {
 
     private final PCRTestRepository pcrTestRepository;
     private final PatientRepository patientRepository;
@@ -14,8 +14,8 @@ public class PCRTestService {
     private final DistrictRepository districtRepository;
     private final WorkplaceRepository workplaceRepository;
 
-    public PCRTestService(PCRTestRepository pcrTestRepository, PatientRepository patientRepository, RegionRepository regionRepository,
-                          DistrictRepository districtRepository, WorkplaceRepository workplaceRepository) {
+    public BasicOperations(PCRTestRepository pcrTestRepository, PatientRepository patientRepository, RegionRepository regionRepository,
+                           DistrictRepository districtRepository, WorkplaceRepository workplaceRepository) {
         this.pcrTestRepository = pcrTestRepository;
         this.patientRepository = patientRepository;
         this.regionRepository = regionRepository;
@@ -212,7 +212,6 @@ public class PCRTestService {
 
     public Iterable<PCRTest> twenty(int testId) {
         this.pcrTestRepository.removeById(testId);
-
     }
 
 

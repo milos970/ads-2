@@ -99,7 +99,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
 
             parent = next;
         }
-        return current.value;
+        return current.value();
     }
 
     @Override
@@ -107,7 +107,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
         AvlNode<K,V> node = (AvlNode<K, V>) super.findNode(key).orElseThrow(NoSuchElementException::new);
         AvlNode<K,V> predecessor = null;
 
-        V value = node.value;
+        V value = node.value();
 
         if (node.hasLeftSon() && node.hasRightSon()) {
 
@@ -117,8 +117,8 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
                 current = (AvlNode<K, V>) current.leftSon();
             }
 
-            node.key = current.key;
-            node.value = current.value;
+            node.setKey(current.key());
+            node.setValue(current.value());
 
             predecessor = (AvlNode<K, V>) current.parent();
 
@@ -144,7 +144,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
             predecessor.height = calculateHeight(predecessor);
             int balance = calculateBalance(predecessor);
 
-            if (predecessor.equals(this.root)) {
+            if (predecessor.equals(root)) {
                 System.out.println(656);
             }
 
@@ -199,20 +199,15 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
 
 
 
-    public static class AvlNode<K extends Comparable<K>,V> extends BSTNode<K ,V> {
+    static class AvlNode<K extends Comparable<K>,V> extends BSTNode<K ,V> {
         private int height;
 
         public AvlNode(K key, V value) {
             super(key, value);
         }
 
-        @Override
-        public String toString() {
-            return "AvlNode{" +
-                    "height=" + height +
-                    ", key=" + key +
-                    ", value=" + value +
-                    '}';
+        public void setHeight(int height) {
+            this.height = height;
         }
 
         public int height() {

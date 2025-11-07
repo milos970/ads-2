@@ -7,7 +7,7 @@ import com.milos970.model.entity.PCRTest;
 public final class Mapper
 {
     public static PCRTestResponse toResponse(PCRTest test) {
-        return new PCRTestResponse();
+        return null;
     }
 
     public static PCRTestRequest toRequest(PCRTest test) {

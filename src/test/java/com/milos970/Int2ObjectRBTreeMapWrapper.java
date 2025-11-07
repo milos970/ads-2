@@ -1,5 +1,6 @@
-package com.milos970.structure;
+package com.milos970;
 
+import com.milos970.structure.Tree;
 import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 
 import java.util.Optional;

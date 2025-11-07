@@ -8,6 +8,8 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
     protected int size;
 
 
+
+
     protected BSTNode<K,V> insertNode(BSTNode<K,V> node) {
 
         if (this.size == 0) {
@@ -301,17 +303,18 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
 
 
 
-    public static class BSTNode<K extends Comparable<? super K>,V> extends Node<K,V> {
+     static class BSTNode<K extends Comparable<? super K>,V> implements Tree.Node<K,V> {
+        private K key;
+        private V value;
 
         private BSTNode<K, V> left;
         private BSTNode<K, V> right;
         private BSTNode<K, V> parent;
 
         public BSTNode(K key, V value) {
-            super(key, value);
+            this.key = key;
+            this.value = value;
         }
-
-
 
         public void setParent(BSTNode<K,V> node) {
             this.parent = node;
@@ -369,17 +372,26 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
             this.right = null;
         }
 
-        @Override
-        public String toString() {
-            return "BstNode{" +
-                    "left=" + left +
-                    ", right=" + right +
-                    ", parent=" + parent +
-                    ", key=" + key +
-                    ", value=" + value +
-                    '}';
-        }
-    }
+         @Override
+         public void setValue(V value) {
+             this.value = value;
+         }
+
+         @Override
+         public void setKey(K key) {
+             this.key = key;
+         }
+
+         @Override
+         public K key() {
+             return this.key;
+         }
+
+         @Override
+         public V value() {
+             return this.value;
+         }
+     }
 }
 
 

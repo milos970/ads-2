@@ -11,4 +11,12 @@ public interface Tree<K extends Comparable< ? super K>, V>
     K max();
     void clear();
     int size();
+
+
+    interface Node<K,V> {
+        void setValue(V value);
+        void setKey(K key);
+        K key();
+        V value();
+    }
 }
