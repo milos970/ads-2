@@ -1,8 +1,9 @@
 package com.milos970.model.service;
 
-import com.milos970.model.dto.PCRTestRequest;
 import com.milos970.model.entity.*;
 import com.milos970.model.repository.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -10,22 +11,21 @@ public class BasicOperations {
 
     private final PCRTestRepository pcrTestRepository;
     private final PatientRepository patientRepository;
-    private final RegionRepository regionRepository;
-    private final DistrictRepository districtRepository;
-    private final WorkplaceRepository workplaceRepository;
 
-    public BasicOperations(PCRTestRepository pcrTestRepository, PatientRepository patientRepository, RegionRepository regionRepository,
-                           DistrictRepository districtRepository, WorkplaceRepository workplaceRepository) {
+    public BasicOperations(PCRTestRepository pcrTestRepository, PatientRepository patientRepository) {
         this.pcrTestRepository = pcrTestRepository;
         this.patientRepository = patientRepository;
-        this.regionRepository = regionRepository;
-        this.districtRepository = districtRepository;
-        this.workplaceRepository = workplaceRepository;
     }
 
-    public void one(PCRTestRequest pcrTestRequest)
-    {
-        this.pcrTestRepository.save(null);
+    //19
+    public void createPatient(String id, String name, String surname, LocalDate birthday) {
+        this.pcrTestRepository.savePatient(new Patient(id,name,surname,birthday));
+    }
+
+    public void one(LocalDateTime dateTime, String patientId,  int id, int districtId, int regionId, int workplaceId, double value, boolean result,
+                    String note) {
+        Patient patient = this.pcrTestRepository.findPatientById(patientId).get(); //upravit
+        this.pcrTestRepository.saveTest(new PCRTest(dateTime, patientId, id, districtId, regionId, workplaceId, result, value, note, patient ));
     }
 
     public Optional<PCRTest> two(int pcrTestId, String patientId) {

@@ -79,19 +79,20 @@ public final class Generator
             var region = regions[this.random.nextInt(regions.length)];
             var district = districts[this.random.nextInt(districts.length)];
             var workplace = workplaces[this.random.nextInt(workplaces.length)];
-            tests[i] = generatePCRTest(patients[this.random.nextInt(patients.length)].id(),district.id(), region.id(), workplace.id());
+            Patient patient = patients[this.random.nextInt(patients.length)];
+            tests[i] = generatePCRTest(patient.id(),district.id(), region.id(), workplace.id(), patient);
         }
 
     }
 
-    private static PCRTest generatePCRTest(String idPatient, int idDistrict, int idRegion, int idWorkplace) {
+    private static PCRTest generatePCRTest(String idPatient, int idDistrict, int idRegion, int idWorkplace, Patient patient) {
         Random random = new Random();
         int idTest = random.nextInt();
         double value = random.nextDouble();
         boolean result = value > 0.5 ? true : false;
         String note = "FSDFSDFSDFDSF";
 
-        return new PCRTest(generateDateTime(),idPatient, random.nextInt(), idDistrict, idRegion, idWorkplace, result, value,note);
+        return new PCRTest(generateDateTime(),idPatient, random.nextInt(), idDistrict, idRegion, idWorkplace, result, value,note, patient);
     }
 
 
@@ -183,16 +184,4 @@ public final class Generator
 
 
 
-    //pouzijem AVL, kedze sa jedna o len raz vkladanie a degeneroval by
-    private void initRegionsAndDistricts() {
-        Map<Integer, int[]> data = new LinkedHashMap<>();
-        data.put(101, new int[]{10101, 10102, 10103, 10104, 10105, 10106, 10107, 10108}); // Bratislavský
-        data.put(201, new int[]{20101, 20102, 20103, 20104, 20105, 20106, 20107});         // Trnavský
-        data.put(301, new int[]{30101, 30102, 30103, 30104, 30105, 30106, 30107});         // Trenčiansky
-        data.put(401, new int[]{40101, 40102, 40103, 40104, 40105, 40106, 40107, 40108}); // Nitriansky
-        data.put(501, new int[]{50101, 50102, 50103, 50104, 50105, 50106, 50107});         // Žilinský
-        data.put(601, new int[]{60101, 60102, 60103, 60104, 60105, 60106, 60107, 60108}); // Banskobystrický
-        data.put(701, new int[]{70101, 70102, 70103, 70104, 70105, 70106, 70107});         // Prešovský
-        data.put(801, new int[]{80101, 80102, 80103, 80104, 80105, 80106});                // Košický
-    }
 }

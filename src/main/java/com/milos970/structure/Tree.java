@@ -6,7 +6,7 @@ public interface Tree<K extends Comparable< ? super K>, V>
 {
     V insert(K key, V Value);
     Optional<V> find(K key);
-    V delete(K key);
+    Optional<V> delete(K key);
     K min();
     K max();
     void clear();

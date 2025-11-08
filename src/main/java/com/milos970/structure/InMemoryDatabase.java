@@ -1,155 +1,197 @@
 package com.milos970.structure;
 
 import com.milos970.model.entity.*;
+import com.milos970.model.service.DateTestKey;
+import com.milos970.model.service.PatientTestDateKey;
+import com.milos970.model.service.PatientTestKey;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public final class InMemoryDatabase
 {
-    private final BSTree<Integer, Region> regions;
-    private final BSTree<Integer, District> districts;
-    private final BSTree<Integer, Workplace> workplaces;
-
+    private final BSTree<DistrictDateKey, PCRTest> testsByDistrictAndDate;
+    private final BSTree<RegionDateKey, PCRTest> testsByRegionAndDate;
+    private final BSTree<DistrictDateKey, PCRTest> positiveTestsByDistrictAndDate;
+    private final BSTree<RegionDateKey, PCRTest> positiveTestsByRegionAndDate;
+    private final BSTree<WorkplaceDateKey, PCRTest> testsByWorkplaceAndDate;
     private final BSTree<Integer, PCRTest> testsById;
-    private final BSTree<LocalDateTime, PCRTest> testsByDate;
-    private final BSTree<LocalDateTime, PCRTest> positiveTestsByDate;
-
-    private final BSTree<String, BSTree<Integer,PCRTest>> testsByPatientPk;
-    private final BSTree<String, BSTree<LocalDateTime,PCRTest>> testsByPatientPkSortedByDate;
-
     private final BSTree<String, Patient> patientsById;
+    private final BSTree<DateTestKey, PCRTest> testsByDate;
+    private final BSTree<DateTestKey, PCRTest> positiveTestsByDate;
+
+
+    private final BSTree<PatientTestKey, PCRTest> testsByPatientAndTest;
+    private final BSTree<PatientTestDateKey, PCRTest> testsByPatientAndTestAndDate;
 
     public InMemoryDatabase()
     {
-        this.regions = new AVLTree<>();
-        this.districts = new AVLTree<>();
-        this.workplaces = new AVLTree<>();
+        this.testsByDistrictAndDate = new AVLTree<>();
+        this.testsByRegionAndDate = new AVLTree<>();
+        this.positiveTestsByDistrictAndDate = new AVLTree<>();
+        this.positiveTestsByRegionAndDate = new AVLTree<>();
 
-        this.testsById = new BSTree<>();
-        this.testsByDate = new BSTree<>();
+        this.testsByWorkplaceAndDate = new AVLTree<>();
 
-        this.testsByPatientPk = new AVLTree<>();
-        this.positiveTestsByDate = new BSTree<>();
-
-        this.testsByPatientPkSortedByDate = new AVLTree<>();
-
+        this.testsById = new AVLTree<>();
         this.patientsById = new AVLTree<>();
+
+        this.testsByPatientAndTest = new AVLTree<>();
+        this.testsByPatientAndTestAndDate = new AVLTree<>();
+
+        this.testsByDate = new AVLTree<>();
+        this.positiveTestsByDate = new AVLTree<>();
     }
 
-    public void insertIntoTableRegions(int pk, Region region) {
-        this.regions.insert(pk, region);
+
+
+
+        public void insertIntoPositiveTestsByDateKey(DateTestKey key, PCRTest test) {
+            this.positiveTestsByDate.insert(key, test);
+        }
+
+        public void deleteFromPositiveTestsByDateKey(DateTestKey key) {
+            this.positiveTestsByDate.delete(key);
+        }
+
+        public List<PCRTest> findPositiveTestsByDateAndId(DateTestKey keyA, DateTestKey keyB) {
+            return this.positiveTestsByDate.intervalSearch(keyA, keyB);
+        }
+
+
+        public void insertIntoTestsByDateAndId(DateTestKey key, PCRTest test) {
+            this.testsByDate.insert(key, test);
+        }
+
+        public void deleteFromTestsByDateAndId(DateTestKey key) {
+            this.testsByDate.delete(key);
+        }
+
+        public List<PCRTest> findTestsByDateAndId(DateTestKey keyA, DateTestKey keyB) {
+            return this.testsByDate.intervalSearch(keyA, keyB);
+        }
+
+        // --- Pacient + Test + Dátum ---
+        public void insertIntoTestsByPatientAndTestAndDate(PatientTestDateKey key, PCRTest test) {
+            this.testsByPatientAndTestAndDate.insert(key, test);
+        }
+
+        public void deleteFromTestsByPatientAndTestAndDate(PatientTestDateKey key) {
+            this.testsByPatientAndTestAndDate.delete(key);
+        }
+
+        public List<PCRTest> findByPatientAndTestAndDate(PatientTestDateKey key) {
+            return this.testsByPatientAndTestAndDate.find(key);
+        }
+
+        // --- Pacient + Test ---
+        public void insertIntoTestsPatientAndTest(PatientTestKey key, PCRTest test) {
+            this.testsByPatientAndTest.insert(key, test);
+        }
+
+        public void deleteFromTestsPatientAndTest(PatientTestKey key) {
+            this.testsByPatientAndTest.delete(key);
+        }
+
+        public Optional<PCRTest> findByPatientAndTest(PatientTestKey key) {
+            return this.testsByPatientAndTest.find(key);
+        }
+
+    public List<PCRTest> findTestsByPatientAndTest(PatientTestKey keyA, PatientTestKey keyB) {
+        return this.testsByPatientAndTest.intervalSearch(keyA,keyB);
     }
 
-    public void insertIntoTableDistricts(int pk, District district) {
-        this.districts.insert(pk, district);
-    }
+        // --- Okres + Dátum ---
+        public void insertIntoTestsByDistrictAndDate(DistrictDateKey key, PCRTest test) {
+            this.testsByDistrictAndDate.insert(key, test);
+        }
 
-    public void insertIntoTableWorkplaces(int pk, Workplace workplace) {
-        this.workplaces.insert(pk, workplace);
-    }
+        public void deleteFromTestsByDistrictAndDate(DistrictDateKey key) {
+            this.testsByDistrictAndDate.delete(key);
+        }
 
-    public void insertIntoTablePCRTests(PCRTest test) {
-        this.testsById.insert(test.id(), test);
-    }
+        public void insertIntoPositiveTestsByDistrictAndDate(DistrictDateKey key, PCRTest test) {
+            this.positiveTestsByDistrictAndDate.insert(key, test);
+        }
 
-    public void insertIntoTablePatients(Patient patient) {
-        this.patientsById.insert(patient.id(), patient);
-    }
+        public void deleteFromPositiveTestsByDistrictAndDate(DistrictDateKey key) {
+            this.positiveTestsByDistrictAndDate.delete(key);
+        }
 
-    public void insertIntoTablePCRTestByDate(PCRTest test) {
-        this.testsById.insert(test.id(), test);
-    }
-    public void insertIntoTablePositivePCRTestByDate(PCRTest test) {
-        this.testsById.insert(test.id(), test);
-    }
+        // --- Región + Dátum ---
+        public void insertIntoTestsByRegionAndDate(RegionDateKey key, PCRTest test) {
+            this.testsByRegionAndDate.insert(key, test);
+        }
 
-    public List<District> findAllDistricts() {
-        return this.districts.inOrderValues();
-    }
+        public void deleteFromTestsByRegionAndDate(RegionDateKey key) {
+            this.testsByRegionAndDate.delete(key);
+        }
 
-    public List<Region> findAllRegions() {
-        return this.regions.inOrderValues();
-    }
+        public void insertIntoPositiveTestsByRegionAndDate(RegionDateKey key, PCRTest test) {
+            this.positiveTestsByRegionAndDate.insert(key, test);
+        }
 
-    public Optional<Patient> findPatientByPk(String pk) {
-        return this.patientsById.find(pk);
-    }
+        public void deleteFromPositiveTestsByRegionAndDate(RegionDateKey key) {
+            this.positiveTestsByRegionAndDate.delete(key);
+        }
 
-    public Optional<Region> findRegionByPk(int pk) {
-        return this.regions.find(pk);
-    }
+        // --- Workplace + Dátum ---
+        public void insertIntoPTestsByWorkplaceAndDate(WorkplaceDateKey key, PCRTest test) {
+            this.testsByWorkplaceAndDate.insert(key, test);
+        }
 
-    public Optional<District> findDistrictByPk(int pk) {
-        return this.districts.find(pk);
-    }
+        public void deleteFromTestsByWorkplaceAndDate(WorkplaceDateKey key) {
+            this.testsByWorkplaceAndDate.delete(key);
+        }
 
-    public Optional<Workplace> findWorkplaceByPk(int pk) {
-        return this.workplaces.find(pk);
-    }
+        // --- ID testu ---
+        public void insertIntoTestsById(int id, PCRTest test) {
+            this.testsById.insert(id, test);
+        }
 
-    public Optional<PCRTest> findPCRTestByPk(int pk) {
-        return this.testsById.find(pk);
-    }
+        public Optional<PCRTest> deleteFromTestsById(int id) {
+            return this.testsById.delete(id);
+        }
 
-    public Optional<PCRTest> findTestByPatientPk(String patientPk, int testPk) {
-        var tests = this.testsByPatientPk.find(patientPk).orElseThrow(NoClassDefFoundError::new);
-        return tests.find(testPk);
+        // --- Pacient podľa ID ---
+        public void insertIntoPatientsById(String id, Patient patient) {
+            this.patientsById.insert(id, patient);
+        }
 
-    }
+        public Optional<Patient> deleteFromPatientsById(String id) {
+            return this.patientsById.delete(id);
+        }
 
-    public List<PCRTest> findAllTestsByPatientPk(String patientPk) {
-        var tests = this.testsByPatientPkSortedByDate.find(patientPk).orElseThrow(NoClassDefFoundError::new);
-        return tests.inOrderValues();
+        // --- FIND metódy ---
+        public List<PCRTest> findTestsByDistrictAndDate(DistrictDateKey from, DistrictDateKey to) {
+            return this.testsByDistrictAndDate.intervalSearch(from, to);
+        }
 
-    }
+        public List<PCRTest> findPositiveTestsByDistrictAndDate(DistrictDateKey from, DistrictDateKey to) {
+            return this.positiveTestsByDistrictAndDate.intervalSearch(from, to);
+        }
 
-    public List<PCRTest> findAllTestsByDate(LocalDateTime from, LocalDateTime to) {
-        return this.testsByDate.intervalSearch(from, to);
-    }
+        public List<PCRTest> findTestsByRegionAndDate(RegionDateKey from, RegionDateKey to) {
+            return this.testsByRegionAndDate.intervalSearch(from, to);
+        }
 
-    public List<PCRTest> findAllPositiveTestsByDate(LocalDateTime from, LocalDateTime to) {
-        return this.positiveTestsByDate.intervalSearch(from, to);
-    }
+        public List<PCRTest> findPositiveTestsByRegionAndDate(RegionDateKey from, RegionDateKey to) {
+            return this.positiveTestsByRegionAndDate.intervalSearch(from, to);
+        }
 
-    public void insertIntoTablePCRTestsByPatientId(PCRTest test) {
-        var tests = this.testsByPatientPk.find(test.patientId()).orElseThrow(NoClassDefFoundError::new);
-        tests.insert(test.id(), test);
-    }
+        public List<PCRTest> findTestsByWorkplaceAndDate(WorkplaceDateKey from, WorkplaceDateKey to) {
+            return this.testsByWorkplaceAndDate.intervalSearch(from, to);
+        }
 
-    public void insertIntoTablePCRTestsByPatientIdByDate(PCRTest test) {
-        var tests = this.testsByPatientPkSortedByDate.find(test.patientId()).orElseThrow(NoClassDefFoundError::new);
-        tests.insert(test.date(), test);
-    }
+        public Optional<PCRTest> findTestById(int id) {
+            return this.testsById.find(id);
+        }
 
-    public Region deleteRegionByPkFromRegionTable(int pk) {
-        return this.regions.delete(pk);
-    }
+        public Optional<Patient> findPatientById(String id) {
+            return this.patientsById.find(id);
+        }
 
-    public District deleteDistrictByPkFromDistrictTable(int pk) {
-        return this.districts.delete(pk);
-    }
 
-    public Workplace deleteWorkplaceByPkFromWorkplaceTable(int pk) {
-        return this.workplaces.delete(pk);
-    }
-
-    public PCRTest deletePCRTestByPkFromPCRTestsByPkTable(int pk) {
-        return this.testsById.delete(pk);
-    }
-
-    public PCRTest deletePCRTestByPkFromPCRTestsByDateTable(LocalDateTime date) {
-        return this.testsByDate.delete(date);
-    }
-
-    public PCRTest deletePCRTestByPkFromPositivePCRTestsByDateTable(LocalDateTime date) {
-        return this.positiveTestsByDate.delete(date);
-    }
-
-    public Patient deletePatientByPk(String pk) {
-        return this.patientsById.delete(pk);
-    }
 
 
 

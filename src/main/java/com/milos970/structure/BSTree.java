@@ -151,9 +151,12 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
 
 
     @Override
-    public V delete(K key) {
-        BSTNode<K, V> node = this.findNode(key)
-                .orElseThrow(NoSuchElementException::new);
+    public Optional<V> delete(K key) {
+        Optional<BSTNode<K, V>> optionalNode = findNode(key);
+        if (optionalNode.isEmpty()) {
+            return Optional.empty();
+        }
+        BSTNode<K, V> node = optionalNode.get();
         V value = node.value;
 
         if (node.hasLeftSon() && node.hasRightSon()) {
@@ -183,7 +186,7 @@ public  class BSTree<K extends Comparable<? super K>,V> implements Tree<K,V>
         }
 
         this.size--;
-        return value;
+        return Optional.of(value);
     }
 
 

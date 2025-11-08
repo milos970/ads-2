@@ -14,8 +14,10 @@ public class MainController {
     @FXML
     public void initialize() {
         loadTab(patientTab, "/presenter/Patient.fxml");
-        loadTab(testTab, "/presenter/Filtering.fxml");
-        loadTab(filteringTab, "/presenter/Test.fxml");
+        loadTab(filteringTab, "/presenter/Filtering.fxml");
+        loadTab(testTab, "/presenter/Test.fxml");
+
+
     }
 
     private void loadTab(Tab tab, String fxmlPath) {
