@@ -1,8 +1,8 @@
 package com.milos970.structure;
 
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
-public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
+public final class AVLTree<K extends Comparable<? super K>,V> extends BSTree<K,V>
 {
     private void leftRotation(AvlNode<K, V> node) {
         AvlNode<K, V> rightSon = (AvlNode<K, V>) node.rightSon();
@@ -103,10 +103,13 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
     }
 
     @Override
-    public V delete(K key) {
-        AvlNode<K,V> node = (AvlNode<K, V>) super.findNode(key).orElseThrow(NoSuchElementException::new);
+    public Optional<V> delete(K key) {
+        Optional<BSTNode<K, V>> optionalNode = findNode(key);
+        if (optionalNode.isEmpty()) {
+            return Optional.empty();
+        }
+        AvlNode<K, V> node = (AvlNode<K, V>)optionalNode.get();
         AvlNode<K,V> predecessor = null;
-
         V value = node.value();
 
         if (node.hasLeftSon() && node.hasRightSon()) {
@@ -145,7 +148,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
             int balance = calculateBalance(predecessor);
 
             if (predecessor.equals(root)) {
-                System.out.println(656);
+
             }
 
             if (balance == -1 || balance == 1) {
@@ -176,12 +179,12 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
         }
 
         super.size--;
-        return value;
+        return Optional.of(value);
 
     }
 
 
-    private static <K extends Comparable<K>, V> int calculateHeight(AvlNode<K, V> node) {
+    private static <K extends Comparable<? super K>, V> int calculateHeight(AvlNode<K, V> node) {
         if (node == null) {
             return -1;
         }
@@ -191,7 +194,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
     }
 
 
-    private static <K extends Comparable<K>, V> int calculateBalance(AvlNode<K, V> node) {
+    private static <K extends Comparable<? super K>, V> int calculateBalance(AvlNode<K, V> node) {
         int left = calculateHeight((AvlNode<K, V>) node.leftSon());
         int right = calculateHeight((AvlNode<K, V>) node.rightSon());
         return left - right;
@@ -199,7 +202,7 @@ public final class AVLTree<K extends Comparable<K>,V> extends BSTree<K,V>
 
 
 
-    static class AvlNode<K extends Comparable<K>,V> extends BSTNode<K ,V> {
+    public static class AvlNode<K extends Comparable<? super K>,V> extends BSTNode<K ,V> {
         private int height;
 
         public AvlNode(K key, V value) {

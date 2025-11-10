@@ -19,7 +19,7 @@
          <children>
             <AnchorPane prefHeight="321.0" prefWidth="381.0">
                <children>
-                  <VBox alignment="TOP_CENTER" layoutX="159.0" layoutY="61.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="vBox" alignment="TOP_CENTER" layoutX="159.0" layoutY="61.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Výber Operácie" />
                         <RadioButton fx:id="test" mnemonicParsing="false" onAction="#checkCategory" text="PCRTest">
@@ -30,12 +30,16 @@
                         <RadioButton fx:id="district" mnemonicParsing="false" onAction="#checkCategory" text="District" toggleGroup="$toggleGroup" />
                         <RadioButton fx:id="region" mnemonicParsing="false" onAction="#checkCategory" text="Region" toggleGroup="$toggleGroup" />
                         <ComboBox fx:id="combobox" onAction="#checkOperation" prefWidth="150.0" promptText="Výber operáciu" />
-                        <ComboBox fx:id="tuComboBox" prefWidth="150.0" />
-                        <DatePicker fx:id="fromDatePicker" />
-                        <TextField fx:id="xTextField" />
+                        <TextField fx:id="workplaceIdTextField" promptText="WorkplaceID" />
+                        <TextField fx:id="testIdTextField" promptText="TestID" />
+                        <TextField fx:id="patientIdTextField" promptText="PatientID" />
+                        <TextField fx:id="districtIdTextField" promptText="DistrictID" />
+                        <TextField fx:id="regionIdTextField" promptText="RegionID" />
+                        <DatePicker fx:id="fromDatePicker" promptText="From" />
+                        <TextField promptText="Days" fx:id="xTextField" />
                         <CheckBox fx:id="positiveCheckBox" mnemonicParsing="false" text="Only positive" />
-                        <DatePicker fx:id="toDatePicker" />
-                        <Button mnemonicParsing="false" text="Filter" />
+                        <DatePicker fx:id="toDatePicker" promptText="To" />
+                        <Button fx:id="filterButton" mnemonicParsing="false" text="Filter" />
                      </children>
                   </VBox>
                </children>

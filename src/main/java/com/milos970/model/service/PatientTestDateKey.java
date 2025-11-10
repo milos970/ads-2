@@ -8,8 +8,12 @@ public record PatientTestDateKey(String patientId, LocalDateTime testDateTime, I
     @Override
     public int compareTo(PatientTestDateKey other) {
         int cmp = this.patientId.compareTo(other.patientId);
-        if (cmp == 0) cmp = this.testDateTime.compareTo(other.testDateTime);
-        if (cmp == 0) cmp = Integer.compare(this.testId, other.testId);
+        if (cmp == 0) {
+          cmp = this.testDateTime.compareTo(other.testDateTime);
+        }
+        if (cmp == 0) {
+          cmp = Integer.compare(this.testId, other.testId);
+        }
         return cmp;
     }
 }

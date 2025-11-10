@@ -94,7 +94,7 @@ public class PatientController {
         this.errorLabel.setVisible(false);
 
 
-        this.basicOperations.createPatient(name,surname, birthday, unique);
+
 
         return true;
     }

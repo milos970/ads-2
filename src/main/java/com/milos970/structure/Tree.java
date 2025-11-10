@@ -1,5 +1,6 @@
 package com.milos970.structure;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface Tree<K extends Comparable< ? super K>, V>
@@ -11,6 +12,8 @@ public interface Tree<K extends Comparable< ? super K>, V>
     K max();
     void clear();
     int size();
+
+    List<V> intervalSearch(K keyA, K keyB);
 
 
     interface Node<K,V> {

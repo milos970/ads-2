@@ -18,8 +18,7 @@
                   <Tab fx:id="patientTab" text="Patient" />
                   <Tab fx:id="testTab" text="PCR test" />
                   <Tab fx:id="filteringTab" text="Filtering" />
-                  <Tab fx:id="importTab" text="Import" />
-                  <Tab fx:id="exportTab" text="Export" />
+                  <Tab fx:id="importExportTab" text="Import/Export" />
                </tabs>
             </TabPane>
          </children>

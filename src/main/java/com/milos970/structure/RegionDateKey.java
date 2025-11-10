@@ -4,20 +4,21 @@ import java.time.LocalDateTime;
 
 public class RegionDateKey implements Comparable<RegionDateKey>
 {
-    private LocalDateTime localDateTime;
-    private Integer id;
+    private final int regionId;
+    private final LocalDateTime dateTime;
+    private final int testId;
 
-    public RegionDateKey(LocalDateTime localDateTime, Integer id) {
-        this.localDateTime = localDateTime;
-        this.id = id;
+    public RegionDateKey(LocalDateTime dateTime, int testId, int regionId) {
+        this.dateTime = dateTime;
+        this.testId = testId;
+        this.regionId = regionId;
     }
 
     @Override
-    public int compareTo(RegionDateKey other) {
-        int cmp = this.localDateTime.compareTo(other.localDateTime);
-        if (cmp == 0) {
-            return this.id.compareTo(other.id);
-        }
+    public int compareTo(RegionDateKey o) {
+        int cmp = Integer.compare(this.regionId, o.regionId);
+        if (cmp == 0) cmp = this.dateTime.compareTo(o.dateTime);
+        if (cmp == 0) cmp = Integer.compare(this.testId, o.testId);
         return cmp;
     }
 }

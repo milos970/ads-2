@@ -22,7 +22,7 @@ public class PCRTestCsvStrategy implements Strategy<PCRTest>  {
                 String line = String.join(",",
                         String.valueOf(test.id()),
                         String.valueOf(test.result()),
-                        String.valueOf(test.date()),
+                        String.valueOf(test.dateTime()),
                         String.valueOf(test.patientId()),
                         String.valueOf(test.regionId()),
                         String.valueOf(test.districtId()),
@@ -64,7 +64,7 @@ public class PCRTestCsvStrategy implements Strategy<PCRTest>  {
                 double value = Double.parseDouble(parts[7].trim());
                 String note = parts[8].trim();
 
-                PCRTest test = new PCRTest(date, patientId, id, districtId, regionId, workplaceId,result, value,note);
+                PCRTest test = null;
                 testList.add(test);
             }
         } catch (IOException e) {

@@ -10,6 +10,7 @@ public class MainController {
     @FXML private Tab patientTab;
     @FXML private Tab testTab;
     @FXML private Tab filteringTab;
+    @FXML private Tab importExportTab;
 
     @FXML
     public void initialize() {

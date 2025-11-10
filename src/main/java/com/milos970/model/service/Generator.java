@@ -76,7 +76,7 @@ public final class Generator
 
         for (int i = 0; i < numberOfTests; ++i)
         {
-            var region = regions[this.random.nextInt(regions.length)];
+            var region = regions[this.random.nextInt(numberOfRegions)];
             var district = districts[this.random.nextInt(districts.length)];
             var workplace = workplaces[this.random.nextInt(workplaces.length)];
             Patient patient = patients[this.random.nextInt(patients.length)];

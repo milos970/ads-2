@@ -22,10 +22,10 @@ public class Workplace
     }
 
     public void addPositivePCRTest(PCRTest test) {
-        this.positiveTests.insert(test.date(), test);
+        this.positiveTests.insert(test.dateTime(), test);
     }
     public void addNegativePCRTest(PCRTest test) {
-        this.negativeTests.insert(test.date(), test);
+        this.negativeTests.insert(test.dateTime(), test);
     }
 
     public BSTree<LocalDateTime, PCRTest> getPositiveTests() {

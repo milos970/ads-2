@@ -27,7 +27,7 @@ public class Patient
 
     public void addTest(PCRTest test) {
         this.testsById.insert(test.id(), test);
-        this.testsByDate.insert(test.date(),test);
+
     }
 
     public BSTree<Integer, PCRTest> getTestsById() {
