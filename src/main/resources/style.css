@@ -1,0 +1,135 @@
+.text-field {
+    -fx-background-color: #2a3e55; /* tmavé pozadie, prispôsob farbe */
+    -fx-text-fill: white; /* farba textu */
+    -fx-border-color: #7fa2c1; /* outline farba – svetlá modrá */
+    -fx-border-width: 1.5px; /* hrúbka rámika */
+    -fx-border-radius: 4px; /* zaoblené rohy */
+    -fx-background-radius: 4px;
+    -fx-padding: 4px 6px;
+	-fx-font-size: 24px;
+}
+
+
+.radio-button {
+    -fx-alignment: center-left;
+	-fx-font-size: 24px;
+    -fx-text-fill: #ffffff;
+    -fx-mark-color: #0078d7;
+}
+
+
+.v-box {
+    -fx-background-color: #436385;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+
+/* Štýl samotného DatePicker (textová časť + tlačidlo) */
+.date-picker {
+    -fx-background-color: #2a3e55;
+    -fx-text-fill: white;
+    -fx-border-color: #7fa2c1;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 4px 6px;
+}
+
+
+.date-picker  .text-field {
+    -fx-background-color: transparent; /* aby sa zobrazilo tmavé pozadie DatePicker */
+    -fx-text-fill: white;
+	-fx-font-size: 24px;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #2a3e55;
+    -fx-border-color: #7fa2c1;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 4px;
+}
+
+/* Štýl samotného kalendára (popup) */
+.date-picker .popup-content {
+    -fx-background-color: #2a3e55;
+    -fx-text-fill: white;
+}
+
+/* Štýl buniek kalendára */
+.date-picker .day-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+
+
+
+/* ********************************************************************************** */
+
+
+#testVBox {
+    -fx-background-color: #436385;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+
+
+/* celý TabPane */
+#tabPane {
+    -fx-background-color: #67bed9;
+    -fx-border-color: #7fa2c1;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+/* oblasť záložiek */
+#tabPane .tab-header-area {
+    -fx-background-color: #67bed9;
+    -fx-padding: 4px;
+}
+
+/* jednotlivé záložky */
+#tabPane .tab {
+    -fx-background-color: #2a3e55;
+    -fx-border-color: #7fa2c1;
+    -fx-border-width: 1.5px 1.5px 0 1.5px; /* vrch a boky */
+    -fx-border-radius: 4px 4px 0 0;
+    -fx-background-radius: 4px 4px 0 0;
+    -fx-padding: 4px 8px;
+}
+
+/* aktívna záložka */
+#tabPane .tab:selected {
+    -fx-background-color: #3e5b75;
+    -fx-border-color: #7fa2c1;
+}
+
+/* text záložky */
+#tabPane .tab .tab-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+/* obsah záložky */
+#tabPane .tab-content-area {
+    -fx-background-color: #2a3e55;
+    -fx-border-color: #7fa2c1;
+    -fx-border-width: 1.5px 1.5px 1.5px 1.5px;
+    -fx-border-radius: 0 0 4px 4px;
+    -fx-background-radius: 0 0 4px 4px;
+}
+
+#tabPane .tab-header-area {
+    -fx-background-color: #2a3e55; /* tmavé pozadie oblasti záložiek */
+}
+
+/* pásik nad záložkami (tab header bar) */
+#tabPane .tab-header-background {
+    -fx-background-color: #67bed9; /* tmavomodrý pásik */
+    -fx-border-color: #67bed9;      /* voliteľný border okolo pásika */
+    -fx-border-width: 0 0 1.5px 0;  /* iba spodný okraj */
+}
+

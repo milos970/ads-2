@@ -1,7 +1,5 @@
 package com.milos970.model.service;
 
-import com.milos970.structure.RegionDateKey;
-
 public record PatientTestKey(String patientId, Integer keyId) implements Comparable<PatientTestKey> {
 
 

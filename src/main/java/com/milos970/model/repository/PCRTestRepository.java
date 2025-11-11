@@ -25,22 +25,23 @@ public final class PCRTestRepository {
 
     //1
     public void saveTest(PCRTest test) {
-        this.database.insertIntoTestsById(test.id(), test);
-        this.database.insertIntoPositiveTestsByDistrictDateKey(new DistrictDateKey(test.dateTime(),test.id(), test.districtId()), test);
-        this.database.insertIntoTestsByDistrictDateKey(new DistrictDateKey(test.dateTime(),test.id(), test.districtId()), test);
-        this.database.insertIntoPositiveTestsByRegionDateKey(new RegionDateKey(test.dateTime(),test.id(), test.regionId()), test);
-        this.database.insertIntoTestsByRegionDateKey(new RegionDateKey(test.dateTime(),test.id(), test.regionId()), test);
-        this.database.insertIntoTestsByWorkplaceDateKey(new WorkplaceDateKey(test.dateTime(),test.id(), test.workplaceId()), test);
 
-        this.database.insertIntoTestsByDateTestKey(new DateTestKey(test.dateTime(), test.id()), test);
-        this.database.insertIntoPositiveTestsByDateTestKey(new DateTestKey(test.dateTime(), test.id()), test);
-        this.database.insertIntoTestsByPatientTestKey(new PatientTestKey(test.patientId(), test.id()), test);
-        this.database.insertIntoTestsByPatientTestDateKey(new PatientTestDateKey(test.patientId(), test.dateTime(), test.id()), test);
+        this.database.insertIntoTestsById(test.getId(), test);
+        this.database.insertIntoPositiveTestsByDistrictDateKey(new DistrictDateKey(test.getDateTime(),test.getId(), test.getDistrictId()), test);
+        this.database.insertIntoTestsByDistrictDateKey(new DistrictDateKey(test.getDateTime(),test.getId(), test.getDistrictId()), test);
+        this.database.insertIntoPositiveTestsByRegionDateKey(new RegionDateKey(test.getDateTime(),test.getId(), test.getRegionId()), test);
+        this.database.insertIntoTestsByRegionDateKey(new RegionDateKey(test.getDateTime(),test.getId(), test.getRegionId()), test);
+        this.database.insertIntoTestsByWorkplaceDateKey(new WorkplaceDateKey(test.getDateTime(),test.getId(), test.getWorkplaceId()), test);
+
+        this.database.insertIntoTestsByDateTestKey(new DateTestKey(test.getDateTime(), test.getId()), test);
+        this.database.insertIntoPositiveTestsByDateTestKey(new DateTestKey(test.getDateTime(), test.getId()), test);
+        this.database.insertIntoTestsByPatientTestKey(new PatientTestKey(test.getPatientId(), test.getId()), test);
+        this.database.insertIntoTestsByPatientTestDateKey(new PatientTestDateKey(test.getPatientId(), test.getDateTime(), test.getId()), test);
     }
 
 
     //2
-    public Optional<PCRTest> findByTestPatientIdAndTestId(String patientId, int testId) {
+    public Optional<PCRTest> findTestByPatientIdAndTestId(String patientId, int testId) {
         return this.database.findTestByPatientTestKey(new PatientTestKey(patientId, testId));
     }
 
@@ -112,16 +113,16 @@ public final class PCRTestRepository {
     //20
     public void deletePCRTest(int id) {
         PCRTest test = this.database.findTestById(id).orElseThrow(NoSuchElementException::new);
-        /*this.database.deleteFromPositiveTestsByDistrictAndDate(new DistrictDateKey(test.date(), test.districtId()));
-        this.database.deleteFromPositiveTestsByRegionAndDate(new RegionDateKey(test.date(), test.regionId()));
-        this.database.deleteFromTestsByDistrictAndDate(new DistrictDateKey(test.date(), test.districtId()));
-        this.database.deleteFromTestsByRegionAndDate(new RegionDateKey(test.date(), test.regionId()));
-        this.database.deleteFromPositiveTestsByDateAndId(new DateTestKey(test.date(), test.id()));
-        this.database.deleteFromTestsByDateAndId(new DateTestKey(test.date(), test.id()));
-        this.database.deleteFromTestsById(test.id());
-        this.database.deleteFromTestsByWorkplaceAndDate(new WorkplaceDateKey(test.date(), test.id()));
-        this.database.deleteFromTestsPatientAndTest(new PatientTestKey(test.patientId(), test.id()));
-        this.database.deleteFromTestsByPatientAndTestAndDate(new PatientTestDateKey(test.patientId(), test.date(), test.id()));*/
+        this.database.deleteFromTestsByDistrictDateKey(new DistrictDateKey(test.getDateTime(), id, test.getDistrictId()));
+        this.database.deleteFromPositiveTestsByRegionDateKey(new RegionDateKey(test.getDateTime(), id, test.getDistrictId()));
+        this.database.deleteFromPositiveTestsByDistrictDateKey(new DistrictDateKey(test.getDateTime(), id, test.getDistrictId()));
+        this.database.deleteFromTestsByRegionAndDate(new RegionDateKey(test.getDateTime(), id, test.getRegionId()));
+        this.database.deleteFromPositiveTestsByDateTestKey(new DateTestKey(test.getDateTime(), test.getId()));
+        this.database.deleteFromTestsByDateTestKey(new DateTestKey(test.getDateTime(), test.getId()));
+        this.database.deleteFromTestsById(test.getId());
+        this.database.deleteFromTestsByWorkplaceDateKey(new WorkplaceDateKey(test.getDateTime(),  test.getId(), test.getWorkplaceId()));
+       // this.database.deleteFromPa(new PatientTestKey(test.patientId(), test.id()));
+        this.database.deleteFromTestsByPatientTestDateKey(new PatientTestDateKey(test.getPatientId(), test.getDateTime(), test.getId()));
     }
 
     //21
@@ -131,6 +132,14 @@ public final class PCRTestRepository {
 
     public Optional<Patient> findPatientById(String id) {
         return this.database.findPatientById(id);
+    }
+
+    public List<Patient> findAllPatients() {
+        return this.database.findAllPatients();
+    }
+
+    public List<PCRTest> findAllPCRTests() {
+        return this.database.findAllTests();
     }
 
 }

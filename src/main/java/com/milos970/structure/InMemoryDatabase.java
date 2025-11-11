@@ -153,6 +153,14 @@ public final class InMemoryDatabase
         return this.testsById.delete(id);
     }
 
+    public List<PCRTest> findAllTests() {
+        return this.testsById.inOrderValues();
+    }
+
+    public List<Patient> findAllPatients() {
+        return this.patientsById.inOrderValues();
+    }
+
 
 
 

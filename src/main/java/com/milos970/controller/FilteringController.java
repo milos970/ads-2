@@ -1,6 +1,10 @@
 package com.milos970.controller;
 
+import com.milos970.model.entity.PCRTest;
+import com.milos970.model.entity.Patient;
 import com.milos970.model.service.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -37,8 +41,6 @@ public class FilteringController {
     private TextField xTextField;
     @FXML
     private ComboBox tuComboBox;
-    @FXML
-    private CheckBox positiveCheckBox;
 
     @FXML
     private TextField patientIdTextField;
@@ -124,9 +126,7 @@ public class FilteringController {
         handleOperationSwitch(whichOperation);
     }
 
-    /**
-     * Odstráni všetky vstupné polia z VBoxu (okrem filterButton).
-     */
+
     private void hideAllInputs() {
         vBox.getChildren().removeAll(
                 testIdTextField,
@@ -136,38 +136,27 @@ public class FilteringController {
                 fromDatePicker,
                 toDatePicker,
                 xTextField,
-                positiveCheckBox
+                workplaceIdTextField
         );
     }
 
-    /**
-     * Pridá komponent do VBoxu, ak tam ešte nie je.
-     */
+
     private void showNode(Node node) {
         if (!vBox.getChildren().contains(node)) {
-            vBox.getChildren().add(vBox.getChildren().size() - 1, node); // pred tlačidlo
+            vBox.getChildren().add(vBox.getChildren().size() - 1, node);
         }
     }
 
-    /**
-     * Dynamicky nastaví, ktoré prvky sa majú zobraziť.
-     */
+
     private void handleOperationSwitch(int whichOperation) {
         hideAllInputs();
-
         switch (whichOperation) {
             case 2 -> {
                 showNode(patientIdTextField);
                 showNode(testIdTextField);
             }
             case 3 -> showNode(patientIdTextField);
-            case 4 -> {
-                showNode(districtIdTextField);
-                showNode(fromDatePicker);
-                showNode(toDatePicker);
-                showNode(positiveCheckBox);
-            }
-            case 5 -> {
+            case 4, 5 -> {
                 showNode(districtIdTextField);
                 showNode(fromDatePicker);
                 showNode(toDatePicker);
@@ -186,7 +175,7 @@ public class FilteringController {
                 showNode(fromDatePicker);
                 showNode(xTextField);
             }
-            case 12 -> {
+            case 12, 16 -> {
                 showNode(regionIdTextField);
                 showNode(fromDatePicker);
                 showNode(xTextField);
@@ -195,18 +184,35 @@ public class FilteringController {
                 showNode(fromDatePicker);
                 showNode(xTextField);
             }
+
+            case 17 -> {
+                showNode(workplaceIdTextField);
+                showNode(fromDatePicker);
+                showNode(toDatePicker);
+            }
+
+            case 18 -> {
+                showNode(testIdTextField);
+
+            }
+
+            case 20 -> {
+                showNode(testIdTextField);
+            }
+
+            case 21 -> {
+                showNode(patientIdTextField);
+            }
+
         }
 
-        // 🟩 zabezpečí, že filterButton je vždy na konci
         if (vBox.getChildren().contains(filterButton)) {
             vBox.getChildren().remove(filterButton);
         }
         vBox.getChildren().add(filterButton);
     }
 
-    /**
-     * 🔍 Spustí aktuálne zvolenú operáciu z BasicOperations podľa `currentOperation`
-     */
+
     @FXML
     private void executeSelectedOperation() {
         if (basicOperations == null) {
@@ -217,211 +223,198 @@ public class FilteringController {
             System.out.println("❗ Najprv vyber operáciu z menu!");
             return;
         }
-
         try {
             switch (currentOperation) {
 
                 case 1 -> {
-                    // createPatient
                     basicOperations.createPatient(
                             patientIdTextField.getText(),
                             "Meno",
                             "Priezvisko",
                             LocalDate.now()
                     );
-                    System.out.println("✅ Pacient vytvorený.");
-                }
 
+                }
                 case 2 -> {
-                    // one()
-                    basicOperations.one(
-                            LocalDateTime.now(),
-                            patientIdTextField.getText(),
-                            Integer.parseInt(testIdTextField.getText()),
-                            Integer.parseInt(districtIdTextField.getText()),
-                            Integer.parseInt(regionIdTextField.getText()),
-                            1, // workplaceId
-                            10.5, // value
-                            positiveCheckBox.isSelected(),
-                            "Poznámka"
-                    );
-                    System.out.println("✅ Test uložený.");
+                    PCRTest test = basicOperations.two(
+                            Integer.valueOf(this.testIdTextField.getText()),
+                            this.patientIdTextField.getText()
+                    ).get();
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    observableList.add(formatTestAndPatientWithStars(test));
+                    listView.setItems(observableList);
                 }
-
                 case 3 -> {
-                    // three()
-                    var result = basicOperations.three(patientIdTextField.getText());
-                    System.out.println("➡ Výsledky pre pacienta:");
-                    result.forEach(System.out::println);
+                    Iterable<PCRTest> result = basicOperations.three(patientIdTextField.getText());
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                     for (var test : result) {
+
+                        observableList.add(formatTestAndPatientWithStars(test));
+                    }
+                    listView.setItems(observableList);
                 }
 
                 case 4 -> {
-                    // four()
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    var result = basicOperations.four(Integer.parseInt(districtIdTextField.getText()), from, to);
-                    System.out.println("➡ Výsledky PCRTest podľa okresu:");
-                    result.forEach(System.out::println);
+                    Iterable<PCRTest> result = basicOperations.four(
+                            Integer.parseInt(districtIdTextField.getText()), from, to
+                    );
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var test : result) {
+                        observableList.add(formatTestAndPatientWithStars(test));
+                    }
+                    listView.setItems(observableList);
                 }
 
                 case 5 -> {
-                    // five()
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    var result = basicOperations.five(Integer.parseInt(districtIdTextField.getText()), from, to);
-                    System.out.println("➡ Výsledky testov (okres, čas):");
-                    result.forEach(System.out::println);
+                    Iterable<PCRTest> result = basicOperations.five(
+                            Integer.parseInt(districtIdTextField.getText()), from, to
+                    );
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var test : result) {
+                        observableList.add(formatTestAndPatientWithStars(test));
+                    }
+                    listView.setItems(observableList);
                 }
 
                 case 6 -> {
-                    // six()
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    var result = basicOperations.six(Integer.parseInt(regionIdTextField.getText()), from, to);
-                    System.out.println("➡ Pozitívne testy podľa regiónu:");
-                    result.forEach(System.out::println);
+                    Iterable<PCRTest> result = basicOperations.six(
+                            Integer.parseInt(regionIdTextField.getText()), from, to
+                    );
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var test : result) {
+                        observableList.add(formatTestAndPatientWithStars(test));
+                    }
+                    listView.setItems(observableList);
                 }
 
                 case 7 -> {
-                    // seven()
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    var result = basicOperations.seven(Integer.parseInt(regionIdTextField.getText()), from, to);
-                    System.out.println("➡ Všetky testy podľa regiónu:");
-                    result.forEach(System.out::println);
+                    Iterable<PCRTest> result = basicOperations.seven(
+                            Integer.parseInt(regionIdTextField.getText()), from, to
+                    );
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var test : result) {
+                        observableList.add(formatTestAndPatientWithStars(test));
+                    }
+                    listView.setItems(observableList);
                 }
 
-                case 8 -> {
-                    // eight()
+                case 8, 9 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    var result = basicOperations.eight(from, to);
-                    System.out.println("➡ Výsledky operácie 8:");
-                    result.forEach(System.out::println);
+                    Iterable<PCRTest> result = (currentOperation == 8)
+                            ? basicOperations.eight(from, to)
+                            : basicOperations.nine(from, to);
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var test : result) {
+                        observableList.add(formatTestAndPatientWithStars(test));
+                    }
+                    listView.setItems(observableList);
                 }
 
-                case 9 -> {
-                    // nine()
-                    LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
-                    LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    var result = basicOperations.nine(from, to);
-                    System.out.println("➡ Výsledky operácie 9:");
-                    result.forEach(System.out::println);
-                }
-
-                case 10 -> {
-                    // teen()
+                case 10, 11 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
-                    var result = basicOperations.teen(Integer.parseInt(districtIdTextField.getText()), from, x);
-                    System.out.println("➡ Výsledky operácie 10:");
-                    result.forEach(System.out::println);
+                    Iterable<PCRTest> result = (currentOperation == 10)
+                            ? basicOperations.teen(Integer.parseInt(districtIdTextField.getText()), from, x)
+                            : basicOperations.eleven(Integer.parseInt(districtIdTextField.getText()), from, x);
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var patient : result) {
+                        observableList.add("************************************");
+                        observableList.add(patient.toString());
+                        observableList.add("************************************");
+                    }
+                    listView.setItems(observableList);
                 }
 
-                case 11 -> {
-                    // eleven()
+                case 12, 13 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
-                    var result = basicOperations.eleven(Integer.parseInt(districtIdTextField.getText()), from, x);
-                    System.out.println("➡ Výsledky operácie 11:");
-                    result.forEach(System.out::println);
-                }
-
-                case 12 -> {
-                    // twelve()
-                    LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
-                    int x = Integer.parseInt(xTextField.getText());
-                    var result = basicOperations.twelve(from, x);
-                    System.out.println("➡ Pozitívne testy v období:");
-                    result.forEach(System.out::println);
-                }
-
-                case 13 -> {
-                    // thirteen()
-                    LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
-                    int x = Integer.parseInt(xTextField.getText());
-                    var result = basicOperations.thirteen(from, x);
-                    System.out.println("➡ Všetky testy v období:");
-                    result.forEach(System.out::println);
+                    Iterable<PCRTest> result = (currentOperation == 12)
+                            ? basicOperations.twelve(Integer.valueOf(regionIdTextField.getText()), from, x)
+                            : basicOperations.thirteen(from, x);
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var test : result) {
+                        observableList.add(formatTestAndPatientWithStars(test));
+                    }
+                    listView.setItems(observableList);
                 }
 
                 case 14 -> {
-                    // fourteen()
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
-                    var result = basicOperations.fourteen(from, x);
-                    System.out.println("➡ Pacienti operácie 14:");
-                    result.forEach(System.out::println);
+                    List<Patient> result = basicOperations.fourteen(from, x);
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var patient : result) {
+                        observableList.add("************************************");
+                        observableList.add(patient.toString());
+                        observableList.add("************************************");
+                    }
+                    listView.setItems(observableList);
                 }
 
-                case 15 -> {
-                    // fifteen()
+                case 15, 16 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
-                    var result = basicOperations.fifteen(from, x);
-                    System.out.println("➡ Počet testov podľa okresov:");
-                    result.forEach(e -> System.out.println("Okres " + e.getKey() + " → " + e.getValue()));
-                }
-
-                case 16 -> {
-                    // sixteen()
-                    LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
-                    int x = Integer.parseInt(xTextField.getText());
-                    var result = basicOperations.sixteen(from, x);
-                    System.out.println("➡ Počet testov podľa regiónov:");
-                    result.forEach(e -> System.out.println("Región " + e.getKey() + " → " + e.getValue()));
+                    List<Map.Entry<Integer, Integer>> result = (currentOperation == 15)
+                            ? basicOperations.fifteen(from, x)
+                            : basicOperations.sixteen(from, x);
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var entry : result) {
+                        observableList.add("************************************");
+                        observableList.add((currentOperation == 15 ? "Okres " : "Región ") + entry.getKey() + " → " + entry.getValue());
+                        observableList.add("************************************");
+                    }
+                    listView.setItems(observableList);
                 }
 
                 case 17 -> {
-                    // seventeen()
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    var result = basicOperations.seventeen(
-                            Integer.parseInt(districtIdTextField.getText()), from, to
+                    Iterable<PCRTest> tests = basicOperations.seventeen(
+                            Integer.parseInt(workplaceIdTextField.getText()), from, to
                     );
-                    System.out.println("➡ Pacienti podľa pracoviska:");
-                    result.forEach(System.out::println);
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    for (var test : tests) {
+                        observableList.add(formatTestAndPatientWithStars(test));
+                    }
+                    listView.setItems(observableList);
                 }
 
                 case 18 -> {
-                    // eighteen()
                     var result = basicOperations.eighteen(Integer.parseInt(testIdTextField.getText()));
-                    System.out.println("➡ Test s ID:");
-                    System.out.println(result.orElse(null));
+                    ObservableList<String> observableList = FXCollections.observableArrayList();
+                    result.ifPresent(test -> observableList.add(formatTestAndPatientWithStars(test)));
+                    listView.setItems(observableList);
                 }
 
-                case 19 -> {
-                    // nineteen()
-                    basicOperations.nineteen(
-                            "Meno",
-                            "Priezvisko",
-                            LocalDate.now(),
-                            patientIdTextField.getText()
-                    );
-                    System.out.println("✅ Pacient uložený.");
-                }
 
-                case 20 -> {
-                    // twenty()
-                    basicOperations.twenty(Integer.parseInt(testIdTextField.getText()));
-                    System.out.println("✅ Test odstránený.");
-                }
-
-                case 21 -> {
-                    // twentyOne()
-                    String patientId = patientIdTextField.getText();
-                    basicOperations.twentyOne(patientId);
-                    System.out.println("✅ Pacient " + patientId + " a jeho testy boli odstránené.");
-                }
-
-                default -> System.out.println("⚠️ Operácia " + currentOperation + " zatiaľ nie je implementovaná.");
+                default -> System.out.println("Operácia " + currentOperation + " zatiaľ nie je implementovaná.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("❌ Chyba pri vykonávaní operácie " + currentOperation);
+            System.err.println("Chyba pri vykonávaní operácie " + currentOperation);
         }
     }
+
+    private String formatTestAndPatientWithStars(PCRTest test) {
+        if (test == null) return "";
+
+        String separator = "************************************";
+        return separator + "\n" +
+                test.toString() + "\n\n" +
+                test.getPatient().toString() + "\n" +
+                separator;
+    }
+
 
 
 

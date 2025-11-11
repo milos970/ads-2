@@ -1,6 +1,8 @@
 package com.milos970.model.service;
 
 import com.milos970.model.entity.*;
+import com.milos970.model.repository.PCRTestRepository;
+import com.milos970.model.repository.PatientRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,11 +12,11 @@ public final class Generator
 {
     private final Random random;
 
-    private static final int MAX_NUMBER_OF_REGIONS = 100;
-    private static final int MAX_NUMBER_OF_DISTRICTS = 1000;
-    private static final int MAX_NUMBER_OF_WORKPLACES = 50_000;
-    private static final int MAX_NUMBER_OF_PATIENTS = 100_000;
-    private static final int MAX_NUMBER_OF_PCR_TESTS = 1_000_000;
+    private static final int MAX_NUMBER_OF_REGIONS = 1000;
+    private static final int MAX_NUMBER_OF_DISTRICTS = 10000;
+    private static final int MAX_NUMBER_OF_WORKPLACES = 50_0000;
+    private static final int MAX_NUMBER_OF_PATIENTS = 100_0000;
+    private static final int MAX_NUMBER_OF_PCR_TESTS = 1_000_0000;
 
     private int numberOfRegions;
     private int numberOfDistricts;
@@ -22,7 +24,11 @@ public final class Generator
     private int numberOfPatients;
     private int numberOfTests;
 
-    public Generator(int numOfRegions, int numberOfDistricts, int numberOfWorkplaces, int numberOfPatients, int numberOfTests) {
+    private final BasicOperations operations;
+
+
+    public Generator(int numOfRegions, int numberOfDistricts, int numberOfWorkplaces, int numberOfPatients, int numberOfTests,
+                     BasicOperations operations) {
         if (numOfRegions > MAX_NUMBER_OF_REGIONS
                 || numberOfDistricts > MAX_NUMBER_OF_DISTRICTS
                 || numberOfWorkplaces > MAX_NUMBER_OF_WORKPLACES
@@ -47,6 +53,8 @@ public final class Generator
         this.numberOfTests = numberOfTests;
 
         this.random = new Random();
+
+        this.operations = operations;
     }
 
     public void generateAll()
@@ -80,26 +88,24 @@ public final class Generator
             var district = districts[this.random.nextInt(districts.length)];
             var workplace = workplaces[this.random.nextInt(workplaces.length)];
             Patient patient = patients[this.random.nextInt(patients.length)];
-            tests[i] = generatePCRTest(patient.id(),district.id(), region.id(), workplace.id(), patient);
+            var test = generatePCRTest(patient.id(),district.id(), region.id(), workplace.id());
+            test.setPatient(patient);
+            this.operations.createPatient(patient.id(), patient.name(), patient.surname(), patient.birthday());
+            this.operations.one(test.getDateTime(),test.getPatientId(), test.getId(), test.getDistrictId(), test.getRegionId(), test.getWorkplaceId(),test.getValue(), test.isResult(), test.getNote());
         }
-
     }
 
-    private static PCRTest generatePCRTest(String idPatient, int idDistrict, int idRegion, int idWorkplace, Patient patient) {
-        Random random = new Random();
-        int idTest = random.nextInt();
+    private  PCRTest generatePCRTest(String idPatient, int idDistrict, int idRegion, int idWorkplace) {
+        int idTest = random.nextInt(0, Integer.MAX_VALUE);
         double value = random.nextDouble();
-        boolean result = value > 0.5 ? true : false;
+        boolean result = value > 0.6 ? true : false;
         String note = "FSDFSDFSDFDSF";
-
-        return new PCRTest(generateDateTime(),idPatient, random.nextInt(), idDistrict, idRegion, idWorkplace, result, value,note, patient);
+        return new PCRTest(generateDateTime(),idPatient, idTest, idDistrict, idRegion, idWorkplace, result, value,note);
     }
 
 
 
-    private static Patient generatePatient() {
-        Random random = new Random();
-
+    private  Patient generatePatient() {
         String[] menaMuz = {
                 "Ján","Peter","Martin","Marek","Lukáš","Tomáš","Michal","Andrej","Filip","Adam",
                 "Patrik","Róbert","Viktor","Juraj","Roman","Marián","Samuel","Pavol","Dominik","Erik",
@@ -135,8 +141,8 @@ public final class Generator
 
     }
 
-    private static LocalDate generateBirthday() {
-        Random random = new Random();
+    private  LocalDate generateBirthday() {
+
         int year = 1955 + random.nextInt(66);
 
         int month = random.nextInt(12) + 1;
@@ -151,8 +157,8 @@ public final class Generator
         return LocalDate.of(year, month,day);
     }
 
-    private static LocalDateTime generateDateTime() {
-        Random random = new Random();
+    private  LocalDateTime generateDateTime() {
+
         int year = 2020 + random.nextInt(6);
 
         int month = random.nextInt(1,13);
@@ -173,15 +179,13 @@ public final class Generator
     }
 
 
-    private static String generateRodCislo(LocalDate birthday, boolean isZena) {
-        Random random = new Random();
+    private  String generateRodCislo(LocalDate birthday, boolean isZena) {
         int year = birthday.getYear() % 100;
         int month = birthday.getMonthValue();
         int day = birthday.getDayOfMonth();
         int poradie = random.nextInt(10_000);
         return String.format("%02d%02d%02d/%04d", year, month, day, poradie);
     }
-
 
 
 }

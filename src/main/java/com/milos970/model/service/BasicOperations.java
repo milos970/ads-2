@@ -23,69 +23,77 @@ public class BasicOperations {
     }
 
     public void one(LocalDateTime dateTime, String patientId,  int id, int districtId, int regionId, int workplaceId, double value, boolean result, String note) {
-        Patient patient = this.pcrTestRepository.findPatientById(patientId).get(); //upravit
-        this.pcrTestRepository.saveTest(new PCRTest(dateTime, patientId, id, districtId, regionId, workplaceId, result, value, note, patient ));
+        Patient patient = this.pcrTestRepository.findPatientById(patientId).get();
+        PCRTest test = new PCRTest(dateTime, patientId, id, districtId, regionId, workplaceId, result, value, note);
+        test.setPatient(patient);
+        this.pcrTestRepository.saveTest(test);
     }
 
     public Optional<PCRTest> two(int pcrTestId, String patientId) {
-        return null;
+        return this.pcrTestRepository.findTestByPatientIdAndTestId(patientId, pcrTestId);
     }
 
     public Iterable<PCRTest> three(String patientId) {
-        return null;
+        return this.pcrTestRepository.findTestsByPatientId(patientId);
     }
 
     public Iterable<PCRTest> four(int districtId, LocalDateTime from, LocalDateTime to) {
-        return null;
+        return this.pcrTestRepository.findPositiveTestsByDistrictIdAndPeriod(districtId, from, to);
     }
 
     public Iterable<PCRTest> five(int districtId, LocalDateTime from, LocalDateTime to) {
-        return null;
+        return this.pcrTestRepository.findTestsByDistrictIdAndPeriod(districtId,from,to);
     }
 
     public Iterable<PCRTest> six(int regionId, LocalDateTime from, LocalDateTime to) {
-        Region region = null; //this.pcrTestRepository.findRegionById(regionId).
-        return null; //this.pcrTestRepository.findAllPositiveByRegion(region, from, to);
+        return this.pcrTestRepository.findPositiveTestsByRegionIdAndPeriod(regionId, from, to);
     }
 
     public Iterable<PCRTest> seven(int regionId, LocalDateTime from, LocalDateTime to) {
-        Region region = null; //this.regionRepository(regionId).
-        return null; //this.pcrTestRepository.findAllByRegion(region, from, to);
+        return this.pcrTestRepository.findTestsByRegionIdAndPeriod(regionId, from, to);
     }
 
-
     public Iterable<PCRTest> eight(LocalDateTime from, LocalDateTime to) {
-        return null;
+        return this.pcrTestRepository.findPositiveTestsByTimePeriod(from,to);
     }
 
     public Iterable<PCRTest> nine(LocalDateTime from, LocalDateTime to) {
-        return null;
+        return this.pcrTestRepository.findTestsByTimePeriod(from,to);
     }
 
-    public Iterable<Patient> teen(int districtId, LocalDateTime from, int x) {
-
-        return null;
+    public Iterable<PCRTest> teen(int districtId, LocalDateTime from, int x) {
+        LocalDateTime to = from.plusDays(x);
+        return this.pcrTestRepository.findPositiveTestsByDistrictIdAndPeriod(districtId,from,to);
     }
 
     public Iterable<PCRTest> eleven(int districtId, LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
-        Map<Integer, Integer> map = new HashMap<>();
-        Iterable<PCRTest>  tests = this.pcrTestRepository.findTestsByDistrictIdAndPeriod(districtId,from, to);
+        Map<String, Integer> map = new HashMap<>();
+        Iterable<PCRTest>  tests = this.pcrTestRepository.findPositiveTestsByDistrictIdAndPeriod(districtId,from, to);
 
+        for (var test : tests) {
+            String patientId = test.getPatientId();
+            if (map.containsKey(patientId)) {
+                map.put(patientId, map.get(patientId) + 1);
+            } else {
+                map.put(patientId, 1);
+            }
+        }
 
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>(map.entrySet());
+        entries.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
         return null;
     }
 
-    public Iterable<PCRTest> twelve(LocalDateTime from, int x) {
+    public Iterable<PCRTest> twelve(int regionId,LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
-        return this.pcrTestRepository.findPositiveTestsByTimePeriod(from, to);
+        return this.pcrTestRepository.findPositiveTestsByRegionIdAndPeriod(regionId,from, to);
     }
 
     public Iterable<PCRTest> thirteen(LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
         return this.pcrTestRepository.findPositiveTestsByTimePeriod(from, to);
     }
-
 
     public List<Patient> fourteen(LocalDateTime from, int x) {
         return null;
@@ -97,7 +105,7 @@ public class BasicOperations {
         Iterable<PCRTest>  tests = this.pcrTestRepository.findTestsByTimePeriod(from, to);
 
         for (var test : tests) {
-            int districtId = test.districtId();
+            int districtId = test.getDistrictId();
             if (map.containsKey(districtId)) {
                 map.put(districtId, map.get(districtId) + 1);
             } else {
@@ -117,7 +125,7 @@ public class BasicOperations {
         Iterable<PCRTest>  tests = this.pcrTestRepository.findTestsByTimePeriod(from, to);
 
         for (var test : tests) {
-            int regionId = test.regionId();
+            int regionId = test.getRegionId();
             if (map.containsKey(regionId)) {
                 map.put(regionId, map.get(regionId) + 1);
             } else {
@@ -153,8 +161,29 @@ public class BasicOperations {
 
         List<PCRTest> testList = this.pcrTestRepository.findTestsByPatientId(patientId);
         for (var test : testList) {
-            this.pcrTestRepository.deletePCRTest(test.id());
+            this.pcrTestRepository.deletePCRTest(test.getId());
         }
+    }
+
+    public void importTests(List<PCRTest> tests) {
+        for (var test : tests) {
+            this.one(test.getDateTime(),test.getPatientId(),test.getId(),test.getDistrictId(),test.getRegionId(),test.getWorkplaceId(),test.getValue(),test.isResult(),test.getNote());
+        }
+    }
+
+    public void importPatients(List<Patient> patients) {
+        for (var patient : patients) {
+            this.createPatient(patient.id(),patient.name(),patient.surname(),patient.birthday());
+
+        }
+    }
+
+    public Iterable<PCRTest> getAllTests() {
+        return this.pcrTestRepository.findAllPCRTests();
+    }
+
+    public Iterable<Patient> getAllPatients() {
+        return this.pcrTestRepository.findAllPatients();
     }
 
 

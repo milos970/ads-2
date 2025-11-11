@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -13,7 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="filteringTab" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milos970.controller.FilteringController">
+<AnchorPane fx:id="filteringTab" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milos970.controller.FilteringController">
    <children>
       <HBox layoutX="191.0" layoutY="85.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -21,7 +22,7 @@
                <children>
                   <VBox fx:id="vBox" alignment="TOP_CENTER" layoutX="159.0" layoutY="61.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Výber Operácie" />
+                        <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Výber Operácie" textFill="WHITE" />
                         <RadioButton fx:id="test" mnemonicParsing="false" onAction="#checkCategory" text="PCRTest">
                            <toggleGroup>
                               <ToggleGroup fx:id="toggleGroup" />
@@ -29,27 +30,61 @@
                         <RadioButton fx:id="patient" mnemonicParsing="false" onAction="#checkCategory" text="Patient" toggleGroup="$toggleGroup" />
                         <RadioButton fx:id="district" mnemonicParsing="false" onAction="#checkCategory" text="District" toggleGroup="$toggleGroup" />
                         <RadioButton fx:id="region" mnemonicParsing="false" onAction="#checkCategory" text="Region" toggleGroup="$toggleGroup" />
-                        <ComboBox fx:id="combobox" onAction="#checkOperation" prefWidth="150.0" promptText="Výber operáciu" />
-                        <TextField fx:id="workplaceIdTextField" promptText="WorkplaceID" />
-                        <TextField fx:id="testIdTextField" promptText="TestID" />
-                        <TextField fx:id="patientIdTextField" promptText="PatientID" />
-                        <TextField fx:id="districtIdTextField" promptText="DistrictID" />
-                        <TextField fx:id="regionIdTextField" promptText="RegionID" />
-                        <DatePicker fx:id="fromDatePicker" promptText="From" />
-                        <TextField promptText="Days" fx:id="xTextField" />
-                        <CheckBox fx:id="positiveCheckBox" mnemonicParsing="false" text="Only positive" />
-                        <DatePicker fx:id="toDatePicker" promptText="To" />
-                        <Button fx:id="filterButton" mnemonicParsing="false" text="Filter" />
+                        <ComboBox fx:id="combobox" maxWidth="300.0" onAction="#checkOperation" prefWidth="250.0" promptText="Výber operáciu">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></ComboBox>
+                        <TextField fx:id="workplaceIdTextField" maxWidth="250.0" prefWidth="150.0" promptText="WorkplaceID">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></TextField>
+                        <TextField fx:id="testIdTextField" maxWidth="250.0" prefWidth="150.0" promptText="TestID">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></TextField>
+                        <TextField fx:id="patientIdTextField" maxWidth="250.0" prefWidth="150.0" promptText="PatientID">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></TextField>
+                        <TextField fx:id="districtIdTextField" maxWidth="250.0" prefWidth="150.0" promptText="DistrictID">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></TextField>
+                        <TextField fx:id="regionIdTextField" maxWidth="250.0" prefWidth="150.0" promptText="RegionID">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></TextField>
+                        <DatePicker fx:id="fromDatePicker" maxWidth="250.0" prefWidth="150.0" promptText="From">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></DatePicker>
+                        <TextField maxWidth="250.0" prefWidth="150.0" promptText="Days" fx:id="xTextField">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></TextField>
+                        <DatePicker fx:id="toDatePicker" maxWidth="250.0" prefWidth="150.0" promptText="To">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></DatePicker>
+                        <Button fx:id="filterButton" mnemonicParsing="false" onAction="#executeSelectedOperation" text="Filter">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></Button>
                      </children>
                   </VBox>
                </children>
             </AnchorPane>
             <AnchorPane prefHeight="321.0" prefWidth="380.0">
                <children>
-                  <ListView fx:id="listView" layoutX="90.0" layoutY="61.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ListView fx:id="listView" layoutX="90.0" layoutY="61.0" prefHeight="168.0" prefWidth="152.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-60.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </children>
       </HBox>
    </children>
+   <styleClass>
+      <String fx:value="radio-button" />
+      <String fx:value="v-box" />
+      <String fx:value="date-picker" />
+   </styleClass>
 </AnchorPane>

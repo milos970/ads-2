@@ -2,12 +2,17 @@ package com.milos970.model.service;
 
 public enum TestSearchType {
 
-    BY_ID("By ID",19),
-    BY_TIME_PERIOD("By time period",8), //8,9
-    BY_REGION_ID_AND_TIME_PERIOD("By region ID and time period",6), //6,7
-    BY_DISTRICT_ID_AND_TIME_PERIOD("By district ID and time period",4), //4,5
-    BY_PATIENT_ID("By patient ID",3), //3
-    BY_PATIENT_AND_TEST_ID("By patient ID and test ID",2);//2
+    BY_ID("By ID",18),
+    BY_TIME_PERIOD("By time period",8),
+    POSITIVE_BY_TIME_PERIOD("Positive by time period",8),
+    BY_REGION_ID_AND_TIME_PERIOD("By region ID and time period",6),
+    POSITIVE_BY_REGION_ID_AND_TIME_PERIOD("Positive by region ID and time period",7),
+    BY_DISTRICT_ID_AND_TIME_PERIOD("By district ID and time period",4),
+    POSITIVE_BY_DISTRICT_ID_AND_TIME_PERIOD("Positive by district ID and time period",5),
+    BY_PATIENT_ID("By patient ID",3),
+    BY_PATIENT_AND_TEST_ID("By patient ID and test ID",2),
+    BY_WORKPLACE_AND_TIME_PERIOD("By workplace ID and time period",17),
+    DELETE_BY_ID("Delete by ID",20);
 
     private final String name;
     private final int index;

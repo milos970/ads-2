@@ -14,7 +14,7 @@ public class PatientController {
     private TextField surnameTextField;
 
     @FXML
-    private DatePicker birthdayDatePicker;
+    private DatePicker birthDatePicker;
 
     @FXML
     private TextField uniqueNumberTextField;
@@ -23,8 +23,23 @@ public class PatientController {
     private Label errorLabel;
 
     @FXML
+    private RadioButton addPatientRadioButton;
+
+    @FXML
+    private RadioButton removePatientRadioButton;
+
+
+    private ToggleGroup toggleGroup;
+
+    @FXML
     public void initialize() {
+
         this.errorLabel.setStyle("-fx-text-fill: red;");
+
+        toggleGroup = new ToggleGroup();
+
+        addPatientRadioButton.setToggleGroup(toggleGroup);
+        removePatientRadioButton.setToggleGroup(toggleGroup);
     }
 
     private BasicOperations basicOperations;
@@ -41,6 +56,7 @@ public class PatientController {
         if (!this.validate()) {
             return;
         }
+        this.basicOperations.createPatient(this.uniqueNumberTextField.getText(), this.nameTextField.getText(), this.surnameTextField.getText(), this.birthDatePicker.getValue());
         this.cleanForm();
     }
 
@@ -48,14 +64,14 @@ public class PatientController {
         this.nameTextField.setText("");
         this.surnameTextField.setText("");
         this.uniqueNumberTextField.setText("");
-        this.birthdayDatePicker.setValue(null);
+        this.birthDatePicker.setValue(null);
     }
 
     private boolean validate() {
         String name = this.nameTextField.getText();
         String surname = this.surnameTextField.getText();
         String unique = this.uniqueNumberTextField.getText();
-        LocalDate birthday = this.birthdayDatePicker.getValue();
+        LocalDate birthday = this.birthDatePicker.getValue();
 
 
         if (name.equals("")) {
@@ -76,10 +92,10 @@ public class PatientController {
 
         if (birthday == null) {
             this.errorLabel.setText("Nezvolený dátum");
-            this.birthdayDatePicker.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+            this.birthDatePicker.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
             return false;
         }else {
-            this.birthdayDatePicker.setStyle("");
+            this.birthDatePicker.setStyle("");
         }
 
         if (unique.equals("")) {

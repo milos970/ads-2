@@ -2,9 +2,11 @@ package com.milos970.model.service;
 
 public enum PatientSearchType
 {
-    BY_DISTRICT_ID_AND_TIME_PERIOD("By district ID and time period",10), //10,11
-    BY_REGION_ID_AND_TIME_PERIOD("By region ID and time period",12), //12,13
-    BY_TIME_PERIOD("By time period",14); //14
+    BY_DISTRICT_ID_AND_TIME_PERIOD("By district ID and time period",10),
+    SORTED_AND_BY_DISTRICT_ID_AND_TIME_PERIOD("By district ID and time period",11),
+    BY_REGION_ID_AND_TIME_PERIOD("By region ID and time period",12),
+    BY_TIME_PERIOD("By time period",13),
+    DELETE_BY_ID("Delete by ID",21);
 
     private final String name;
     private final int index;
