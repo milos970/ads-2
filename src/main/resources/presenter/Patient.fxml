@@ -14,12 +14,12 @@
    <children>
       <VBox fx:id="patientVBox" alignment="CENTER" prefHeight="200.0" prefWidth="417.0" stylesheets="@../style.css" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <RadioButton fx:id="addPatientRadioButton" mnemonicParsing="false" stylesheets="@../style.css" text="Add patient">
+            <RadioButton fx:id="addPatientRadioButton" mnemonicParsing="false" onAction="#addOption" stylesheets="@../style.css" text="Add patient">
                <VBox.margin>
                   <Insets right="40.0" />
                </VBox.margin>
             </RadioButton>
-            <RadioButton fx:id="removePatientRadioButton" mnemonicParsing="false" stylesheets="@../style.css" text="Remove patient">
+            <RadioButton fx:id="removePatientRadioButton" mnemonicParsing="false" onAction="#removeOption" stylesheets="@../style.css" text="Remove patient">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
@@ -59,6 +59,14 @@
                <font>
                   <Font size="24.0" />
                </font>
+            </Button>
+            <Button fx:id="removeButton" mnemonicParsing="false" onAction="#remove" text="Remove">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
             </Button>
          </children>
       </VBox>

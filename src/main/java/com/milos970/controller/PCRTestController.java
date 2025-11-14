@@ -2,7 +2,9 @@ package com.milos970.controller;
 
 import com.milos970.model.service.BasicOperations;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,8 +33,20 @@ public class PCRTestController {
         private Label errorLabel;
         @FXML
         private TextField timeTextField;
+        @FXML
+        private VBox testVBox;
+        @FXML
+        private Button removeButton;
+        @FXML
+        private Button saveButton;
+        @FXML
+        private RadioButton addTestRadioButton;
+        @FXML
+        private RadioButton removeTestRadioButton;
 
         private LocalDateTime localDateTime;
+
+        private ToggleGroup toggleGroup;
 
         private Random random = new Random();
 
@@ -74,7 +88,7 @@ public class PCRTestController {
 
             TextFormatter<Integer> formatter5 = new TextFormatter<>(change -> {
                 String newText = change.getControlNewText();
-                if (newText.matches("\\d*")) { // iba čísla
+                if (newText.matches("\\d*")) {
                     return change;
                 }
                 return null;
@@ -85,7 +99,12 @@ public class PCRTestController {
             this.valueTextField.setTextFormatter(formatter4);
             this.patientIdTextField.setTextFormatter(formatter5);
 
+            toggleGroup = new ToggleGroup();
 
+            addTestRadioButton.setToggleGroup(toggleGroup);
+            removeTestRadioButton.setToggleGroup(toggleGroup);
+            this.addTestRadioButton.setSelected(true);
+            this.addOption();
         }
 
         private BasicOperations basicOperations;
@@ -95,7 +114,45 @@ public class PCRTestController {
             this.basicOperations = basicOperations;
         }
 
+    private void hideAllInputs() {
+        this.testVBox.getChildren().clear();
+    }
 
+    private void showNode(Node node) {
+        if (!this.testVBox.getChildren().contains(node)) {
+            this.testVBox.getChildren().add(node);
+        }
+    }
+
+    @FXML
+    private void removeOption() {
+        this.hideAllInputs();
+        this.showNode(this.addTestRadioButton);
+        this.showNode(this.removeTestRadioButton);
+        this.showNode(this.patientIdTextField);
+        this.showNode(this.removeButton);
+    }
+
+    @FXML
+    private void addOption() {
+        this.hideAllInputs();
+        this.showNode(this.addTestRadioButton);
+        this.showNode(this.removeTestRadioButton);
+        this.showNode(this.regionIdTextField);
+        this.showNode(this.districtIdTextField);
+        this.showNode(this.workplaceIdTextField);
+        this.showNode(this.patientIdTextField);
+        this.showNode(this.valueTextField);
+        this.showNode(this.dateDatePicker);
+        this.showNode(this.timeTextField);
+        this.showNode(this.notesTextArea);
+        this.showNode(this.saveButton);
+    }
+
+    @FXML
+    private void remove() {
+
+    }
 
 
         @FXML

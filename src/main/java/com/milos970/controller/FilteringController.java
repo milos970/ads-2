@@ -12,10 +12,7 @@ import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FilteringController {
 
@@ -66,10 +63,14 @@ public class FilteringController {
     @FXML
     private TextField idTextField;
 
+    @FXML
+    private Label errorLabel;
+
     private final HashMap<String, List<String>> map = new HashMap<>();
 
     private BasicOperations basicOperations;
     private int currentOperation = -1;
+    private String selectedOperation = null;
 
     public void setBasicOperations(BasicOperations basicOperations) {
         this.basicOperations = basicOperations;
@@ -95,7 +96,7 @@ public class FilteringController {
                 .toList());
         toggleGroup.selectToggle(toggleGroup.getToggles().get(0));
         this.checkCategory();
-
+        this.handleOperationSwitch(2);
 
     }
 
@@ -105,7 +106,10 @@ public class FilteringController {
             RadioButton selected = (RadioButton) toggleGroup.getSelectedToggle();
             this.combobox.getItems().clear();
             this.combobox.getItems().addAll(this.map.get(selected.getText()));
+            this.combobox.setValue(this.map.get(selected.getText()).get(0));
         }
+
+
 
     }
 
@@ -191,12 +195,7 @@ public class FilteringController {
                 showNode(toDatePicker);
             }
 
-            case 18 -> {
-                showNode(testIdTextField);
-
-            }
-
-            case 20 -> {
+            case 18, 20 -> {
                 showNode(testIdTextField);
             }
 
@@ -216,7 +215,7 @@ public class FilteringController {
     @FXML
     private void executeSelectedOperation() {
         if (basicOperations == null) {
-            System.err.println("⚠️ BasicOperations nie je nastavené!");
+            System.err.println("BasicOperations has not been set up!");
             return;
         }
         if (currentOperation == -1) {
@@ -226,26 +225,37 @@ public class FilteringController {
         try {
             switch (currentOperation) {
 
-                case 1 -> {
-                    basicOperations.createPatient(
-                            patientIdTextField.getText(),
-                            "Meno",
-                            "Priezvisko",
-                            LocalDate.now()
-                    );
+                case 1 -> basicOperations.createPatient(
+                        patientIdTextField.getText(),
+                        "Meno",
+                        "Priezvisko",
+                        LocalDate.now()
+                );
+                case 2 ->
+                {
+                    Optional<PCRTest> test = basicOperations.two(Integer.valueOf(this.testIdTextField.getText()), this.patientIdTextField.getText());
 
-                }
-                case 2 -> {
-                    PCRTest test = basicOperations.two(
-                            Integer.valueOf(this.testIdTextField.getText()),
-                            this.patientIdTextField.getText()
-                    ).get();
+                    if (test.isEmpty())
+                    {
+                        this.errorLabel.setText("Patient or test do not exist!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
+
                     ObservableList<String> observableList = FXCollections.observableArrayList();
-                    observableList.add(formatTestAndPatientWithStars(test));
+                    observableList.add(formatTestAndPatientWithStars(test.get()));
                     listView.setItems(observableList);
                 }
                 case 3 -> {
-                    Iterable<PCRTest> result = basicOperations.three(patientIdTextField.getText());
+                    List<PCRTest> result = basicOperations.three(patientIdTextField.getText());
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No tests!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                      for (var test : result) {
 
@@ -257,9 +267,16 @@ public class FilteringController {
                 case 4 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    Iterable<PCRTest> result = basicOperations.four(
+                    List<PCRTest> result = basicOperations.four(
                             Integer.parseInt(districtIdTextField.getText()), from, to
                     );
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No tests!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                     for (var test : result) {
                         observableList.add(formatTestAndPatientWithStars(test));
@@ -270,9 +287,16 @@ public class FilteringController {
                 case 5 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    Iterable<PCRTest> result = basicOperations.five(
+                    List<PCRTest> result = basicOperations.five(
                             Integer.parseInt(districtIdTextField.getText()), from, to
                     );
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No tests!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                     for (var test : result) {
                         observableList.add(formatTestAndPatientWithStars(test));
@@ -283,9 +307,16 @@ public class FilteringController {
                 case 6 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    Iterable<PCRTest> result = basicOperations.six(
+                    List<PCRTest> result = basicOperations.six(
                             Integer.parseInt(regionIdTextField.getText()), from, to
                     );
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No tests!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                     for (var test : result) {
                         observableList.add(formatTestAndPatientWithStars(test));
@@ -296,9 +327,16 @@ public class FilteringController {
                 case 7 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    Iterable<PCRTest> result = basicOperations.seven(
+                    List<PCRTest> result = basicOperations.seven(
                             Integer.parseInt(regionIdTextField.getText()), from, to
                     );
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No tests!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                     for (var test : result) {
                         observableList.add(formatTestAndPatientWithStars(test));
@@ -309,10 +347,18 @@ public class FilteringController {
                 case 8, 9 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    Iterable<PCRTest> result = (currentOperation == 8)
+                    List<PCRTest> result = (currentOperation == 8)
                             ? basicOperations.eight(from, to)
                             : basicOperations.nine(from, to);
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No tests!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
+                    observableList.add(String.format("Number of records: %d", result.size()));
                     for (var test : result) {
                         observableList.add(formatTestAndPatientWithStars(test));
                     }
@@ -322,9 +368,16 @@ public class FilteringController {
                 case 10, 11 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
-                    Iterable<PCRTest> result = (currentOperation == 10)
+                    List<PCRTest> result = (currentOperation == 10)
                             ? basicOperations.teen(Integer.parseInt(districtIdTextField.getText()), from, x)
                             : basicOperations.eleven(Integer.parseInt(districtIdTextField.getText()), from, x);
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No patients!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                     for (var patient : result) {
                         observableList.add("************************************");
@@ -334,12 +387,20 @@ public class FilteringController {
                     listView.setItems(observableList);
                 }
 
-                case 12, 13 -> {
+                case 12, 13 ->
+                {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
-                    Iterable<PCRTest> result = (currentOperation == 12)
+                    List<PCRTest> result = (currentOperation == 12)
                             ? basicOperations.twelve(Integer.valueOf(regionIdTextField.getText()), from, x)
                             : basicOperations.thirteen(from, x);
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No patients!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                     for (var test : result) {
                         observableList.add(formatTestAndPatientWithStars(test));
@@ -347,10 +408,18 @@ public class FilteringController {
                     listView.setItems(observableList);
                 }
 
-                case 14 -> {
+                case 14 ->
+                {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
                     List<Patient> result = basicOperations.fourteen(from, x);
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No patients!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                     for (var patient : result) {
                         observableList.add("************************************");
@@ -360,12 +429,20 @@ public class FilteringController {
                     listView.setItems(observableList);
                 }
 
-                case 15, 16 -> {
+                case 15, 16 ->
+                {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
                     List<Map.Entry<Integer, Integer>> result = (currentOperation == 15)
                             ? basicOperations.fifteen(from, x)
                             : basicOperations.sixteen(from, x);
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No patients!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                     for (var entry : result) {
                         observableList.add("************************************");
@@ -375,21 +452,39 @@ public class FilteringController {
                     listView.setItems(observableList);
                 }
 
-                case 17 -> {
+                case 17 ->
+                {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    Iterable<PCRTest> tests = basicOperations.seventeen(
+                    List<PCRTest> tests = basicOperations.seventeen(
                             Integer.parseInt(workplaceIdTextField.getText()), from, to
                     );
+                    if (tests.isEmpty())
+                    {
+                        this.errorLabel.setText("No patients!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
+                    observableList.add(String.format("Number of records: %d", tests.size()));
                     for (var test : tests) {
                         observableList.add(formatTestAndPatientWithStars(test));
                     }
                     listView.setItems(observableList);
                 }
 
-                case 18 -> {
-                    var result = basicOperations.eighteen(Integer.parseInt(testIdTextField.getText()));
+                case 18 ->
+                {
+                    Optional<PCRTest> result = basicOperations.eighteen(Integer.parseInt(testIdTextField.getText()));
+
+                    if (result.isEmpty())
+                    {
+                        this.errorLabel.setText("No test!");
+                        return;
+                    } else {
+                        this.errorLabel.setText("");
+                    }
                     ObservableList<String> observableList = FXCollections.observableArrayList();
                     result.ifPresent(test -> observableList.add(formatTestAndPatientWithStars(test)));
                     listView.setItems(observableList);
@@ -406,17 +501,12 @@ public class FilteringController {
     }
 
     private String formatTestAndPatientWithStars(PCRTest test) {
-        if (test == null) return "";
-
+        if (test == null) {
+            return "";
+        }
         String separator = "************************************";
-        return separator + "\n" +
-                test.toString() + "\n\n" +
-                test.getPatient().toString() + "\n" +
-                separator;
+        return separator + "\n" +  test + "\n\n" + test.getPatient() + "\n" + separator;
     }
-
-
-
 
 
 }

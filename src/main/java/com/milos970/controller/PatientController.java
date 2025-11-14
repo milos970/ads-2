@@ -2,7 +2,9 @@ package com.milos970.controller;
 
 import com.milos970.model.service.*;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 
@@ -28,18 +30,27 @@ public class PatientController {
     @FXML
     private RadioButton removePatientRadioButton;
 
+    @FXML
+    private VBox patientVBox;
+
+    @FXML
+    private Button removeButton;
+
+    @FXML
+    private Button saveButton;
+
+
 
     private ToggleGroup toggleGroup;
 
     @FXML
     public void initialize() {
-
         this.errorLabel.setStyle("-fx-text-fill: red;");
-
         toggleGroup = new ToggleGroup();
 
         addPatientRadioButton.setToggleGroup(toggleGroup);
         removePatientRadioButton.setToggleGroup(toggleGroup);
+        this.addPatientRadioButton.setSelected(true);
     }
 
     private BasicOperations basicOperations;
@@ -48,6 +59,47 @@ public class PatientController {
     public void setBasicOperations(BasicOperations basicOperations) {
         this.basicOperations = basicOperations;
     }
+
+    private void hideAllInputs() {
+        patientVBox.getChildren().clear();
+    }
+
+    private void showNode(Node node) {
+        if (!patientVBox.getChildren().contains(node)) {
+            patientVBox.getChildren().add(node);
+        }
+    }
+
+    @FXML
+    private void removeOption() {
+        this.hideAllInputs();
+        this.showNode(this.addPatientRadioButton);
+        this.showNode(this.removePatientRadioButton);
+        this.showNode(this.uniqueNumberTextField);
+        this.showNode(this.removeButton);
+    }
+
+    @FXML
+    private void addOption() {
+        this.hideAllInputs();
+        this.showNode(this.addPatientRadioButton);
+        this.showNode(this.removePatientRadioButton);
+        this.showNode(this.nameTextField);
+        this.showNode(this.surnameTextField);
+        this.showNode(this.birthDatePicker);
+        this.showNode(this.uniqueNumberTextField);
+        this.showNode(this.saveButton);
+    }
+
+
+
+
+    @FXML
+    private void remove() {
+        String ID = this.uniqueNumberTextField.getText();
+    }
+
+
 
 
     @FXML
@@ -114,6 +166,8 @@ public class PatientController {
 
         return true;
     }
+
+
 
 
 }

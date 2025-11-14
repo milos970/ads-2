@@ -62,6 +62,11 @@
     -fx-text-fill: white;
 }
 
+#listView:focused {
+    -fx-background-color: -fx-control-inner-background;
+}
+
+
 
 
 

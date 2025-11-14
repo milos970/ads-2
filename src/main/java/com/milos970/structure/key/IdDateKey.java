@@ -1,4 +1,4 @@
-package com.milos970.structure;
+package com.milos970.structure.key;
 
 import java.time.LocalDateTime;
 

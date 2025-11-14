@@ -33,40 +33,40 @@ public class BasicOperations {
         return this.pcrTestRepository.findTestByPatientIdAndTestId(patientId, pcrTestId);
     }
 
-    public Iterable<PCRTest> three(String patientId) {
+    public List<PCRTest> three(String patientId) {
         return this.pcrTestRepository.findTestsByPatientId(patientId);
     }
 
-    public Iterable<PCRTest> four(int districtId, LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> four(int districtId, LocalDateTime from, LocalDateTime to) {
         return this.pcrTestRepository.findPositiveTestsByDistrictIdAndPeriod(districtId, from, to);
     }
 
-    public Iterable<PCRTest> five(int districtId, LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> five(int districtId, LocalDateTime from, LocalDateTime to) {
         return this.pcrTestRepository.findTestsByDistrictIdAndPeriod(districtId,from,to);
     }
 
-    public Iterable<PCRTest> six(int regionId, LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> six(int regionId, LocalDateTime from, LocalDateTime to) {
         return this.pcrTestRepository.findPositiveTestsByRegionIdAndPeriod(regionId, from, to);
     }
 
-    public Iterable<PCRTest> seven(int regionId, LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> seven(int regionId, LocalDateTime from, LocalDateTime to) {
         return this.pcrTestRepository.findTestsByRegionIdAndPeriod(regionId, from, to);
     }
 
-    public Iterable<PCRTest> eight(LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> eight(LocalDateTime from, LocalDateTime to) {
         return this.pcrTestRepository.findPositiveTestsByTimePeriod(from,to);
     }
 
-    public Iterable<PCRTest> nine(LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> nine(LocalDateTime from, LocalDateTime to) {
         return this.pcrTestRepository.findTestsByTimePeriod(from,to);
     }
 
-    public Iterable<PCRTest> teen(int districtId, LocalDateTime from, int x) {
+    public List<PCRTest> teen(int districtId, LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
         return this.pcrTestRepository.findPositiveTestsByDistrictIdAndPeriod(districtId,from,to);
     }
 
-    public Iterable<PCRTest> eleven(int districtId, LocalDateTime from, int x) {
+    public List<PCRTest> eleven(int districtId, LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
         Map<String, Integer> map = new HashMap<>();
         Iterable<PCRTest>  tests = this.pcrTestRepository.findPositiveTestsByDistrictIdAndPeriod(districtId,from, to);
@@ -85,12 +85,12 @@ public class BasicOperations {
         return null;
     }
 
-    public Iterable<PCRTest> twelve(int regionId,LocalDateTime from, int x) {
+    public List<PCRTest> twelve(int regionId,LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
         return this.pcrTestRepository.findPositiveTestsByRegionIdAndPeriod(regionId,from, to);
     }
 
-    public Iterable<PCRTest> thirteen(LocalDateTime from, int x) {
+    public List<PCRTest> thirteen(LocalDateTime from, int x) {
         LocalDateTime to = from.plusDays(x);
         return this.pcrTestRepository.findPositiveTestsByTimePeriod(from, to);
     }
@@ -139,7 +139,7 @@ public class BasicOperations {
         return entries;
     }
 
-    public Iterable<PCRTest> seventeen(int workplaceId, LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> seventeen(int workplaceId, LocalDateTime from, LocalDateTime to) {
         return this.pcrTestRepository.findPatientByWorkplace(workplaceId, from, to);
     }
 
@@ -178,11 +178,11 @@ public class BasicOperations {
         }
     }
 
-    public Iterable<PCRTest> getAllTests() {
+    public List<PCRTest> getAllTests() {
         return this.pcrTestRepository.findAllPCRTests();
     }
 
-    public Iterable<Patient> getAllPatients() {
+    public List<Patient> getAllPatients() {
         return this.pcrTestRepository.findAllPatients();
     }
 

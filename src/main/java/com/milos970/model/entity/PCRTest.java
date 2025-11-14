@@ -82,17 +82,16 @@ public class PCRTest {
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         String formattedDate = dateTime != null ? dateTime.format(formatter) : "";
-        return  "************************************\n" +
+        return
                 "Test ID: " + id +
                 "\nPatient ID: " + patientId +
                 "\nDistrict ID: " + districtId +
                 "\nRegion ID: " + regionId +
                 "\nWorkplace ID: " + workplaceId +
                 "\nResult: " + (result ? "Positive" : "Negative") +
-                "\nValue: " + value +
+                "\nValue: " + Math.round(value * 100.0) / 100.0 +
                 "\nDate: " + formattedDate +
-                "\nNote: " + (note == null || note.isBlank() ? "—" : note) +
-                "\n************************************";
+                "\nNote: " + (note == null || note.isBlank() ? "—" : note);
     }
 }
 

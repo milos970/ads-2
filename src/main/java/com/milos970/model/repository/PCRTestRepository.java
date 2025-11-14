@@ -2,13 +2,13 @@ package com.milos970.model.repository;
 
 import com.milos970.model.entity.PCRTest;
 import com.milos970.model.entity.Patient;
-import com.milos970.model.service.DateTestKey;
-import com.milos970.model.service.PatientTestDateKey;
-import com.milos970.model.service.PatientTestKey;
-import com.milos970.structure.DistrictDateKey;
+import com.milos970.structure.key.DateTestKey;
+import com.milos970.structure.key.PatientTestDateKey;
+import com.milos970.structure.key.PatientTestKey;
+import com.milos970.structure.key.DistrictDateKey;
 import com.milos970.structure.InMemoryDatabase;
-import com.milos970.structure.RegionDateKey;
-import com.milos970.structure.WorkplaceDateKey;
+import com.milos970.structure.key.RegionDateKey;
+import com.milos970.structure.key.WorkplaceDateKey;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -71,12 +71,12 @@ public final class PCRTestRepository {
     }
 
     //8,13
-    public Iterable<PCRTest> findPositiveTestsByTimePeriod(LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> findPositiveTestsByTimePeriod(LocalDateTime from, LocalDateTime to) {
         return this.database.findPositiveTestsByDateTestKey(new DateTestKey(from, Integer.MIN_VALUE), new DateTestKey(to,Integer.MAX_VALUE));
     }
 
     //9
-    public Iterable<PCRTest> findTestsByTimePeriod(LocalDateTime from, LocalDateTime to) {
+    public List<PCRTest> findTestsByTimePeriod(LocalDateTime from, LocalDateTime to) {
         return this.database.findTestsByDateTestKey(new DateTestKey(from, Integer.MIN_VALUE), new DateTestKey(to,Integer.MAX_VALUE));
     }
 

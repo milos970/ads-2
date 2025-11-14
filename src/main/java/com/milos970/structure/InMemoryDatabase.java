@@ -1,9 +1,12 @@
 package com.milos970.structure;
 
 import com.milos970.model.entity.*;
-import com.milos970.model.service.DateTestKey;
-import com.milos970.model.service.PatientTestDateKey;
-import com.milos970.model.service.PatientTestKey;
+import com.milos970.structure.key.DateTestKey;
+import com.milos970.structure.key.PatientTestDateKey;
+import com.milos970.structure.key.PatientTestKey;
+import com.milos970.structure.key.DistrictDateKey;
+import com.milos970.structure.key.RegionDateKey;
+import com.milos970.structure.key.WorkplaceDateKey;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,11 +46,10 @@ public final class InMemoryDatabase
 
 
 
-
         public void insertIntoPositiveTestsByDateTestKey(DateTestKey key, PCRTest test) {
             this.positiveTestsByDateTestKey.insert(key, test);
         }
-        public Iterable<PCRTest> findPositiveTestsByDateTestKey(DateTestKey keyA, DateTestKey keyB) {
+        public List<PCRTest> findPositiveTestsByDateTestKey(DateTestKey keyA, DateTestKey keyB) {
             return this.positiveTestsByDateTestKey.intervalSearch(keyA, keyB);
         }
         public Optional<PCRTest> deleteFromPositiveTestsByDateTestKey(DateTestKey key) {
