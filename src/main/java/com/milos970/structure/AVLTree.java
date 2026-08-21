@@ -77,24 +77,28 @@ public final class AVLTree<K extends Comparable<? super K>,V> extends BSTree<K,V
             if (balance == 0) {
                 break;
             }
+
             if (balance < -1)
             {
-                if (calculateBalance((AvlNode<K, V>) parent.rightSon()) > 0)
+                balance = calculateBalance((AvlNode<K, V>) parent.rightSon());
+                if (balance > 0)
                 {
                     this.rightRotation((AvlNode<K, V>) parent.rightSon());
                 }
 
                 this.leftRotation(parent);
-                next = (AvlNode<K, V>) parent.parent();
-
+                break;
             }
-            if (balance > 1) {
-                if (calculateBalance((AvlNode<K, V>) parent.leftSon()) < 0) {
+
+            if (balance > 1)
+            {
+                balance = calculateBalance((AvlNode<K, V>) parent.leftSon());
+                if (balance < 0)
+                {
                     this.leftRotation((AvlNode<K, V>) parent.leftSon());
                 }
                 this.rightRotation(parent);
-                next = (AvlNode<K, V>) parent.parent();
-
+                break;
             }
 
             parent = next;
@@ -104,7 +108,7 @@ public final class AVLTree<K extends Comparable<? super K>,V> extends BSTree<K,V
 
     @Override
     public Optional<V> delete(K key) {
-        Optional<BSTNode<K, V>> optionalNode = findNode(key);
+        Optional<BSTNode<K, V>> optionalNode = super.findNode(key);
         if (optionalNode.isEmpty()) {
             return Optional.empty();
         }
@@ -132,8 +136,7 @@ public final class AVLTree<K extends Comparable<? super K>,V> extends BSTree<K,V
             }
 
         } else
-
-        if (node.hasRightSon() || node.hasLeftSon() ) {
+            if (node.hasRightSon() || node.hasLeftSon() ) {
             predecessor = (AvlNode<K, V>) node.parent();
             super.removeOneChild(node);
         } else {
@@ -147,10 +150,6 @@ public final class AVLTree<K extends Comparable<? super K>,V> extends BSTree<K,V
             predecessor.height = calculateHeight(predecessor);
             int balance = calculateBalance(predecessor);
 
-            if (predecessor.equals(root)) {
-
-            }
-
             if (balance == -1 || balance == 1) {
                 break;
             }
@@ -158,7 +157,8 @@ public final class AVLTree<K extends Comparable<? super K>,V> extends BSTree<K,V
             AvlNode<K, V> next = (AvlNode<K, V>)predecessor.parent();
             if (balance < -1)
             {
-                if (calculateBalance((AvlNode<K, V>) predecessor.rightSon()) > 0)
+                balance = calculateBalance((AvlNode<K, V>) predecessor.rightSon());
+                if (balance > 0)
                 {
                     this.rightRotation((AvlNode<K, V>) predecessor.rightSon());
                 }
@@ -167,7 +167,8 @@ public final class AVLTree<K extends Comparable<? super K>,V> extends BSTree<K,V
                 next = (AvlNode<K, V>) predecessor.parent();
             }
             if (balance > 1) {
-                if (calculateBalance((AvlNode<K, V>) predecessor.leftSon()) < 0) {
+                balance = calculateBalance((AvlNode<K, V>) predecessor.leftSon());
+                if (balance < 0) {
                     this.leftRotation((AvlNode<K, V>) predecessor.leftSon());
                 }
                 this.rightRotation(predecessor);
@@ -185,9 +186,7 @@ public final class AVLTree<K extends Comparable<? super K>,V> extends BSTree<K,V
 
 
     private static <K extends Comparable<? super K>, V> int calculateHeight(AvlNode<K, V> node) {
-        if (node == null) {
-            return -1;
-        }
+        if (node == null) { return -1; }
         int leftHeight = node.hasLeftSon() ? ((AvlNode<K, V>) node.leftSon()).height : -1;
         int rightHeight = node.hasRightSon() ? ((AvlNode<K, V>) node.rightSon()).height : -1;
         return Math.max(leftHeight, rightHeight) + 1;

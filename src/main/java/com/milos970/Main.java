@@ -2,10 +2,11 @@ package com.milos970;
 
 
 import com.milos970.controller.MenuController;
-import com.milos970.model.repository.PCRTestRepository;
+import com.milos970.model.repository.InMemoryPatientRepository;
+import com.milos970.model.repository.InMemoryTestRepository;
+import com.milos970.model.repository.PatientRepository;
+import com.milos970.model.repository.TestRepository;
 import com.milos970.model.service.BasicOperations;
-import com.milos970.model.service.Generator;
-import com.milos970.structure.InMemoryDatabase;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,10 +21,10 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
         stage.setResizable(false);
+        PatientRepository patientRepository = new InMemoryPatientRepository();
+        TestRepository testRepository = new InMemoryTestRepository();
 
-        var inMemoryDb = new InMemoryDatabase();
-        var repository = new PCRTestRepository(inMemoryDb);
-        var basicOperations = new BasicOperations(repository, null);
+        var basicOperations = new BasicOperations(testRepository, patientRepository);
 
         MenuController menuController = loader.getController();
 

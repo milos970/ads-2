@@ -2,18 +2,8 @@ package com.milos970.structure.key;
 
 import java.time.LocalDateTime;
 
-public class WorkplaceDateKey implements Comparable<WorkplaceDateKey>
+public record WorkplaceDateKey(LocalDateTime localDateTime, int id, int workplaceId) implements Comparable<WorkplaceDateKey>
 {
-    private LocalDateTime localDateTime;
-    private int id;
-    private int workplaceId;
-
-    public WorkplaceDateKey(LocalDateTime localDateTime, int id, int workplaceId) {
-        this.localDateTime = localDateTime;
-        this.id = id;
-        this.workplaceId = workplaceId;
-    }
-
     @Override
     public int compareTo(WorkplaceDateKey other) {
         int cmp = Integer.compare(this.workplaceId, other.workplaceId);

@@ -37,7 +37,7 @@
 }
 
 
-.date-picker  .text-field {
+.date-picker .text-field {
     -fx-background-color: transparent; /* aby sa zobrazilo tmavé pozadie DatePicker */
     -fx-text-fill: white;
 	-fx-font-size: 24px;
@@ -53,13 +53,13 @@
 /* Štýl samotného kalendára (popup) */
 .date-picker .popup-content {
     -fx-background-color: #2a3e55;
-    -fx-text-fill: white;
+    -fx-text-fill: black;
 }
 
 /* Štýl buniek kalendára */
 .date-picker .day-cell {
     -fx-background-color: transparent;
-    -fx-text-fill: white;
+    -fx-text-fill: black;
 }
 
 #listView:focused {

@@ -1,5 +1,6 @@
 package com.milos970.controller;
 
+import com.milos970.model.CreatePatient;
 import com.milos970.model.service.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -45,12 +46,12 @@ public class PatientController {
 
     @FXML
     public void initialize() {
-        this.errorLabel.setStyle("-fx-text-fill: red;");
         toggleGroup = new ToggleGroup();
 
         addPatientRadioButton.setToggleGroup(toggleGroup);
         removePatientRadioButton.setToggleGroup(toggleGroup);
         this.addPatientRadioButton.setSelected(true);
+        this.addOption();
     }
 
     private BasicOperations basicOperations;
@@ -76,7 +77,9 @@ public class PatientController {
         this.showNode(this.addPatientRadioButton);
         this.showNode(this.removePatientRadioButton);
         this.showNode(this.uniqueNumberTextField);
+        this.showNode(this.errorLabel);
         this.showNode(this.removeButton);
+
     }
 
     @FXML
@@ -88,6 +91,7 @@ public class PatientController {
         this.showNode(this.surnameTextField);
         this.showNode(this.birthDatePicker);
         this.showNode(this.uniqueNumberTextField);
+        this.showNode(this.errorLabel);
         this.showNode(this.saveButton);
     }
 
@@ -96,7 +100,13 @@ public class PatientController {
 
     @FXML
     private void remove() {
-        String ID = this.uniqueNumberTextField.getText();
+
+        if (!this.validateTextField(this.uniqueNumberTextField, "Unique number is required.")) {
+            return;
+        }
+        String personID = this.uniqueNumberTextField.getText();
+        this.basicOperations.twentyOne(personID);
+        this.cleanForm();
     }
 
 
@@ -108,7 +118,12 @@ public class PatientController {
         if (!this.validate()) {
             return;
         }
-        this.basicOperations.createPatient(this.uniqueNumberTextField.getText(), this.nameTextField.getText(), this.surnameTextField.getText(), this.birthDatePicker.getValue());
+        String name = this.nameTextField.getText();
+        String surname = this.surnameTextField.getText();
+        String unique = this.uniqueNumberTextField.getText();
+        LocalDate birthday = this.birthDatePicker.getValue();
+
+        this.basicOperations.createPatient(new CreatePatient(unique, name, surname, birthday));
         this.cleanForm();
     }
 
@@ -120,50 +135,45 @@ public class PatientController {
     }
 
     private boolean validate() {
-        String name = this.nameTextField.getText();
-        String surname = this.surnameTextField.getText();
-        String unique = this.uniqueNumberTextField.getText();
+
+        if (!this.validateTextField(this.nameTextField, "Name is required.")) {
+            return false;
+        }
+
+        if (!this.validateTextField(this.surnameTextField, "Surname is required.")) {
+            return false;
+        }
+
         LocalDate birthday = this.birthDatePicker.getValue();
 
-
-        if (name.equals("")) {
-            this.errorLabel.setText("Neplatne meno");
-            this.nameTextField.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-            return false;
-        } else {
-            this.nameTextField.setStyle("");
-        }
-
-        if (surname.equals("")) {
-            this.errorLabel.setText("Neplatne priezvisko");
-            this.surnameTextField.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-            return false;
-        }else {
-            this.surnameTextField.setStyle("");
-        }
-
         if (birthday == null) {
-            this.errorLabel.setText("Nezvolený dátum");
-            this.birthDatePicker.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-            return false;
-        }else {
+            this.errorLabel.setText("Date is required.");
+            this.birthDatePicker.setStyle("-fx-border-color: red; -fx-border-width: 2px;"); return false;
+        }else
+        {
             this.birthDatePicker.setStyle("");
         }
 
-        if (unique.equals("")) {
-            this.errorLabel.setText("Nezvolená unikátna hodnota");
-            this.uniqueNumberTextField.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+
+        if (!this.validateTextField(this.uniqueNumberTextField, "Unique number is required.")) {
             return false;
-        }else {
-            this.uniqueNumberTextField.setStyle("");
         }
 
         this.errorLabel.setText("");
-        this.errorLabel.setVisible(false);
 
 
+        return true;
+    }
 
 
+    private boolean validateTextField(TextField textField, String message) {
+        if (textField.getText() == null || textField.getText().isBlank()) {
+            this.errorLabel.setText(message);
+            this.errorLabel.setVisible(true);
+            textField.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+            return false;
+        }
+        textField.setStyle("");
         return true;
     }
 

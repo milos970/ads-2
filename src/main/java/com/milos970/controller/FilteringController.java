@@ -1,6 +1,7 @@
 package com.milos970.controller;
 
-import com.milos970.model.entity.PCRTest;
+import com.milos970.model.CreatePatient;
+import com.milos970.model.entity.Test;
 import com.milos970.model.entity.Patient;
 import com.milos970.model.service.*;
 import javafx.collections.FXCollections;
@@ -225,15 +226,10 @@ public class FilteringController {
         try {
             switch (currentOperation) {
 
-                case 1 -> basicOperations.createPatient(
-                        patientIdTextField.getText(),
-                        "Meno",
-                        "Priezvisko",
-                        LocalDate.now()
-                );
+
                 case 2 ->
                 {
-                    Optional<PCRTest> test = basicOperations.two(Integer.valueOf(this.testIdTextField.getText()), this.patientIdTextField.getText());
+                    Optional<Test> test = basicOperations.two(Integer.valueOf(this.testIdTextField.getText()), this.patientIdTextField.getText());
 
                     if (test.isEmpty())
                     {
@@ -242,13 +238,13 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    observableList.add(formatTestAndPatientWithStars(test.get()));
-                    listView.setItems(observableList);
+                    this.printTests(List.of(test.get()));
                 }
                 case 3 -> {
-                    List<PCRTest> result = basicOperations.three(patientIdTextField.getText());
+                    String id = this.patientIdTextField.getText();
+                    LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
+                    LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
+                    List<Test> result = basicOperations.three(id,from,to);
                     if (result.isEmpty())
                     {
                         this.errorLabel.setText("No tests!");
@@ -256,18 +252,13 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                     for (var test : result) {
-
-                        observableList.add(formatTestAndPatientWithStars(test));
-                    }
-                    listView.setItems(observableList);
+                    this.printTests(result);
                 }
 
                 case 4 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    List<PCRTest> result = basicOperations.four(
+                    List<Test> result = basicOperations.four(
                             Integer.parseInt(districtIdTextField.getText()), from, to
                     );
                     if (result.isEmpty())
@@ -277,17 +268,13 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    for (var test : result) {
-                        observableList.add(formatTestAndPatientWithStars(test));
-                    }
-                    listView.setItems(observableList);
+                   this.printTests(result);
                 }
 
                 case 5 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    List<PCRTest> result = basicOperations.five(
+                    List<Test> result = basicOperations.five(
                             Integer.parseInt(districtIdTextField.getText()), from, to
                     );
                     if (result.isEmpty())
@@ -297,17 +284,13 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    for (var test : result) {
-                        observableList.add(formatTestAndPatientWithStars(test));
-                    }
-                    listView.setItems(observableList);
+                    this.printTests(result);
                 }
 
                 case 6 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    List<PCRTest> result = basicOperations.six(
+                    List<Test> result = basicOperations.six(
                             Integer.parseInt(regionIdTextField.getText()), from, to
                     );
                     if (result.isEmpty())
@@ -317,17 +300,13 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    for (var test : result) {
-                        observableList.add(formatTestAndPatientWithStars(test));
-                    }
-                    listView.setItems(observableList);
+                    this.printTests(result);
                 }
 
                 case 7 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    List<PCRTest> result = basicOperations.seven(
+                    List<Test> result = basicOperations.seven(
                             Integer.parseInt(regionIdTextField.getText()), from, to
                     );
                     if (result.isEmpty())
@@ -337,17 +316,13 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    for (var test : result) {
-                        observableList.add(formatTestAndPatientWithStars(test));
-                    }
-                    listView.setItems(observableList);
+                    this.printTests(result);
                 }
 
                 case 8, 9 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    List<PCRTest> result = (currentOperation == 8)
+                    List<Test> result = (currentOperation == 8)
                             ? basicOperations.eight(from, to)
                             : basicOperations.nine(from, to);
                     if (result.isEmpty())
@@ -357,18 +332,13 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    observableList.add(String.format("Number of records: %d", result.size()));
-                    for (var test : result) {
-                        observableList.add(formatTestAndPatientWithStars(test));
-                    }
-                    listView.setItems(observableList);
+                    this.printTests(result);
                 }
 
                 case 10, 11 -> {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
-                    List<PCRTest> result = (currentOperation == 10)
+                    List<Patient> result = (currentOperation == 10)
                             ? basicOperations.teen(Integer.parseInt(districtIdTextField.getText()), from, x)
                             : basicOperations.eleven(Integer.parseInt(districtIdTextField.getText()), from, x);
                     if (result.isEmpty())
@@ -378,20 +348,14 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    for (var patient : result) {
-                        observableList.add("************************************");
-                        observableList.add(patient.toString());
-                        observableList.add("************************************");
-                    }
-                    listView.setItems(observableList);
+                    this.printPatients(result);
                 }
 
                 case 12, 13 ->
                 {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     int x = Integer.parseInt(xTextField.getText());
-                    List<PCRTest> result = (currentOperation == 12)
+                    List<Patient> result = (currentOperation == 12)
                             ? basicOperations.twelve(Integer.valueOf(regionIdTextField.getText()), from, x)
                             : basicOperations.thirteen(from, x);
                     if (result.isEmpty())
@@ -401,11 +365,8 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    for (var test : result) {
-                        observableList.add(formatTestAndPatientWithStars(test));
-                    }
-                    listView.setItems(observableList);
+
+                    this.printPatients(result);
                 }
 
                 case 14 ->
@@ -420,13 +381,9 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    for (var patient : result) {
-                        observableList.add("************************************");
-                        observableList.add(patient.toString());
-                        observableList.add("************************************");
-                    }
-                    listView.setItems(observableList);
+
+                    this.printPatients(result);
+
                 }
 
                 case 15, 16 ->
@@ -456,27 +413,23 @@ public class FilteringController {
                 {
                     LocalDateTime from = fromDatePicker.getValue().atStartOfDay();
                     LocalDateTime to = toDatePicker.getValue().atTime(23, 59);
-                    List<PCRTest> tests = basicOperations.seventeen(
+                    List<Patient> patients = basicOperations.seventeen(
                             Integer.parseInt(workplaceIdTextField.getText()), from, to
                     );
-                    if (tests.isEmpty())
+                    if (patients.isEmpty())
                     {
                         this.errorLabel.setText("No patients!");
                         return;
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    observableList.add(String.format("Number of records: %d", tests.size()));
-                    for (var test : tests) {
-                        observableList.add(formatTestAndPatientWithStars(test));
-                    }
-                    listView.setItems(observableList);
+                    this.printPatients(patients);
+
                 }
 
                 case 18 ->
                 {
-                    Optional<PCRTest> result = basicOperations.eighteen(Integer.parseInt(testIdTextField.getText()));
+                    Optional<Test> result = basicOperations.eighteen(Integer.parseInt(testIdTextField.getText()));
 
                     if (result.isEmpty())
                     {
@@ -485,9 +438,8 @@ public class FilteringController {
                     } else {
                         this.errorLabel.setText("");
                     }
-                    ObservableList<String> observableList = FXCollections.observableArrayList();
-                    result.ifPresent(test -> observableList.add(formatTestAndPatientWithStars(test)));
-                    listView.setItems(observableList);
+                    List<Test> tests = List.of(result.get());
+                    this.printTests(tests);
                 }
 
 
@@ -500,12 +452,38 @@ public class FilteringController {
         }
     }
 
-    private String formatTestAndPatientWithStars(PCRTest test) {
+    private void printTests(List<Test> tests) {
+        ObservableList<String> observableList = FXCollections.observableArrayList();
+        for (var test : tests) {
+            observableList.add(formatTestAndPatientWithStars(test));
+        }
+        observableList.add(String.format("Number of records: %d", tests.size()));
+        listView.setItems(observableList);
+    }
+
+    private void printPatients(List<Patient> patients) {
+        ObservableList<String> observableList = FXCollections.observableArrayList();
+        for (var patient : patients) {
+            observableList.add(formatPatientWithStars(patient));
+        }
+        observableList.add(String.format("Number of records: %d", patients.size()));
+        listView.setItems(observableList);
+    }
+
+    private String formatTestAndPatientWithStars(Test test) {
         if (test == null) {
             return "";
         }
         String separator = "************************************";
         return separator + "\n" +  test + "\n\n" + test.getPatient() + "\n" + separator;
+    }
+
+    private String formatPatientWithStars(Patient patient) {
+        if (patient == null) {
+            return "";
+        }
+        String separator = "************************************";
+        return separator + "\n" +  patient + "\n" + separator;
     }
 
 

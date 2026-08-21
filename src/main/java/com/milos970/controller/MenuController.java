@@ -13,7 +13,7 @@ public class MenuController {
     @FXML private Tab importExportTab;
 
     private PatientController patientController;
-    private PCRTestController testController;
+    private TestController testController;
     private FilteringController filteringController;
     private ImportExportController importExportController;
 
@@ -46,7 +46,7 @@ public class MenuController {
         return filteringController;
     }
 
-    public PCRTestController getTestController() {
+    public TestController getTestController() {
         return testController;
     }
 

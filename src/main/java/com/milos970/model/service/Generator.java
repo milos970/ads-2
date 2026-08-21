@@ -1,8 +1,7 @@
 package com.milos970.model.service;
 
+import com.milos970.model.CreatePatient;
 import com.milos970.model.entity.*;
-import com.milos970.model.repository.PCRTestRepository;
-import com.milos970.model.repository.PatientRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -71,7 +70,7 @@ public final class Generator
         Patient[] patients = new Patient[numberOfPatients];
         Arrays.setAll(patients, i -> generatePatient());
 
-        PCRTest[] tests = new PCRTest[numberOfTests];
+        Test[] tests = new Test[numberOfTests];
         for (int i = 0; i < numberOfDistricts; ++i)
         {
             regions[this.random.nextInt(regions.length)].getDistricts().insert(districts[i].id(),districts[i]);
@@ -90,18 +89,35 @@ public final class Generator
             Patient patient = patients[this.random.nextInt(patients.length)];
             var test = generatePCRTest(patient.id(),district.id(), region.id(), workplace.id());
             test.setPatient(patient);
-            this.operations.createPatient(patient.id(), patient.name(), patient.surname(), patient.birthday());
+            this.operations.createPatient(new CreatePatient(patient.id(), patient.name(), patient.surname(), patient.birthday()));
             this.operations.one(test.getDateTime(),test.getPatientId(), test.getId(), test.getDistrictId(), test.getRegionId(), test.getWorkplaceId(),test.getValue(), test.isResult(), test.getNote());
         }
     }
 
-    private  PCRTest generatePCRTest(String idPatient, int idDistrict, int idRegion, int idWorkplace) {
+    private Test generatePCRTest(String idPatient, int idDistrict, int idRegion, int idWorkplace) {
         int idTest = random.nextInt(0, Integer.MAX_VALUE);
         double value = random.nextDouble();
         boolean result = value > 0.6 ? true : false;
-        String note = "FSDFSDFSDFDSF";
-        return new PCRTest(generateDateTime(),idPatient, idTest, idDistrict, idRegion, idWorkplace, result, value,note);
+        String note = result ? pozitivnePcrPopisy[this.random.nextInt(pozitivnePcrPopisy.length)] : negativnePcrPopisy[this.random.nextInt(negativnePcrPopisy.length)];
+        return new Test(generateDateTime(),idPatient, idTest, idDistrict, idRegion, idWorkplace, result, value,note);
     }
+
+    private String[] negativnePcrPopisy = {
+            "PCR test je negatívny – vírus nebol zistený.",
+            "Negatívny výsledok PCR testu.",
+            "PCR test nepotvrdil prítomnosť vírusu.",
+            "Vzorka je negatívna na sledovaný vírus.",
+            "Nebola detegovaná vírusová RNA."
+    };
+
+    private String[] pozitivnePcrPopisy = {
+            "PCR test je pozitívny – vírus bol zistený.",
+            "Pozitívny výsledok PCR testu.",
+            "PCR test potvrdil prítomnosť vírusu.",
+            "Vzorka obsahuje vírusovú RNA.",
+            "Bola zistená infekcia vírusom."
+    };
+
 
 
 

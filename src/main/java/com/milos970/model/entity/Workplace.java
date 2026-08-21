@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 public class Workplace
 {
     private final int id;
-    private final BSTree<LocalDateTime, PCRTest> positiveTests;
-    private final BSTree<LocalDateTime, PCRTest> negativeTests;
+    private final BSTree<LocalDateTime, Test> positiveTests;
+    private final BSTree<LocalDateTime, Test> negativeTests;
 
     public Workplace(int id) {
         this.id = id;
@@ -21,18 +21,18 @@ public class Workplace
         return id;
     }
 
-    public void addPositivePCRTest(PCRTest test) {
+    public void addPositivePCRTest(Test test) {
         this.positiveTests.insert(test.getDateTime(), test);
     }
-    public void addNegativePCRTest(PCRTest test) {
+    public void addNegativePCRTest(Test test) {
         this.negativeTests.insert(test.getDateTime(), test);
     }
 
-    public BSTree<LocalDateTime, PCRTest> getPositiveTests() {
+    public BSTree<LocalDateTime, Test> getPositiveTests() {
         return positiveTests;
     }
 
-    public BSTree<LocalDateTime, PCRTest> getNegativeTests() {
+    public BSTree<LocalDateTime, Test> getNegativeTests() {
         return negativeTests;
     }
 }

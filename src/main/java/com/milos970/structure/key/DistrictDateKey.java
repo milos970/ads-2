@@ -2,18 +2,8 @@ package com.milos970.structure.key;
 
 import java.time.LocalDateTime;
 
-public class DistrictDateKey implements Comparable<DistrictDateKey>
+public record DistrictDateKey (int districtId, LocalDateTime dateTime, int testId) implements Comparable<DistrictDateKey>
 {
-    private final int districtId;
-    private final LocalDateTime dateTime;
-    private final int testId; // optional for uniqueness
-
-
-    public DistrictDateKey(LocalDateTime dateTime, int testId, int districtId) {
-        this.dateTime = dateTime;
-        this.testId = testId;
-        this.districtId = districtId;
-    }
 
     @Override
     public int compareTo(DistrictDateKey o) {

@@ -59,6 +59,9 @@
                <font>
                   <Font size="24.0" />
                </font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
             </Button>
             <Button fx:id="removeButton" mnemonicParsing="false" onAction="#remove" text="Remove">
                <font>

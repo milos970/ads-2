@@ -1,18 +1,14 @@
 package com.milos970.model.repository;
 
-import com.milos970.structure.InMemoryDatabase;
+import com.milos970.model.entity.Patient;
 
-public final class PatientRepository {
-    private final InMemoryDatabase database;
+import java.util.List;
+import java.util.Optional;
 
-
-    public PatientRepository(InMemoryDatabase database) {
-        this.database = database;
-    }
-
-
-
-
-
-
+public interface PatientRepository
+{
+    public void save(Patient patient);
+    public Optional<Patient> findById(String id);
+    public Optional<Patient> deleteById(String id);
+    public List<Patient> findAll();
 }
