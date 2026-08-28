@@ -16,6 +16,8 @@ PCRio is a JavaFX desktop information system for managing patient records and PC
 
 The application provides patient and test management, searching and data persistence while using custom data structures such as AVL Tree and Binary Search Tree for efficient data organization and retrieval.
 
+---
+
 ## ✨ Features
 
 - 👤 **Patient Management** — Create, view and manage patient records.
