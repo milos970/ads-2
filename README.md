@@ -136,7 +136,9 @@ mvn javafx:run
 
 <p align="center">
   <img src="docs/screenshots/1.png" width="30%">
+  <img src="docs/screenshots/2.png" width="30%">
   <img src="docs/screenshots/3.png" width="30%">
+  <img src="docs/screenshots/4.png" width="30%">
 </p>
 
 ---
