@@ -134,6 +134,10 @@ mvn javafx:run
 ## 📸 Screenshots
 
 
+<p align="center">
+  <img src="docs/screenshots/1.png" width="30%">
+  <img src="docs/screenshots/3.png" width="30%">
+</p>
 
 ---
 
